@@ -13,7 +13,7 @@ export class Player extends Physics.Arcade.Sprite {
     this.sceneRef = scene
     scene.add.existing(this)
     scene.physics.add.existing(this)
-    this.setSize(4, 4)
+    this.setSize(6, 6)
     this.setOffsets(false)
 
     if (!scene.input || !scene.input.keyboard) {
@@ -33,7 +33,7 @@ export class Player extends Physics.Arcade.Sprite {
 
   public setOffsets(flip = false) {
     this.setFlipX(flip)
-    this.setOrigin(flip ? 0 : 0.2, 0.2).setOffset(flip ? 2 : 3, 3)
+    this.setOrigin(flip ? 0 : 0.2, 0.2).setOffset(flip ? 1 : 2, 2)
   }
 
   private handlePlayerInput(): void {

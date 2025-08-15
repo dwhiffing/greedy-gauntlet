@@ -13,7 +13,6 @@ export class Arrow extends Physics.Arcade.Sprite {
     this.sceneRef = scene
     scene.add.existing(this)
     scene.physics.add.existing(this)
-    this.setSize(1, 1)
   }
 
   public update(): void {}
@@ -22,14 +21,15 @@ export class Arrow extends Physics.Arcade.Sprite {
     const vy = _vy[direction]
     this.setPosition(x * 8, y * 8).setVelocity(vx * speed, vy * speed)
 
+    this.setFlipX(direction === 3)
     if (direction === 0) {
-      this.setOrigin(0.1, 0.1).setOffset(4, -7).setAngle(270).setFlipX(false)
+      this.setSize(2, 4).setOrigin(0.1, 0.1).setOffset(3, -6).setAngle(270)
     } else if (direction === 1) {
-      this.setOrigin(0.2, 0.1).setOffset(7, 4).setAngle(0).setFlipX(false)
+      this.setSize(4, 2).setOrigin(0.2, 0.1).setOffset(3, 3).setAngle(0)
     } else if (direction === 2) {
-      this.setOrigin(0.2, 0.9).setOffset(5, 14).setAngle(90).setFlipX(false)
+      this.setSize(2, 4).setOrigin(0.2, 0.9).setOffset(4, 9).setAngle(90)
     } else if (direction === 3) {
-      this.setOrigin(0.9, 0.1).setOffset(1, 4).setAngle(0).setFlipX(true)
+      this.setSize(4, 2).setOrigin(0.9, 0.1).setOffset(1, 3).setAngle(0)
     }
   }
 }
