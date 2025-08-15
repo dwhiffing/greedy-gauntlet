@@ -13,7 +13,7 @@ export class Menu extends Scene {
     const { width, height } = this.cameras.main
     this.title = this.add
       .bitmapText(width / 2, height, 'pixel-dan', 'PRESS Z TO START')
-      .setTintFill(0x000000)
+      .setTintFill(0xffffff)
       .setFontSize(5)
       .setOrigin(0.5, 1)
 
