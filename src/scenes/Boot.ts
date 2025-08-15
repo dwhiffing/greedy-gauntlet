@@ -29,11 +29,14 @@ export class Boot extends Scene {
   preload() {
     this.load.setPath('assets')
     this.load.bitmapFont('pixel-dan', 'pixel-dan.png', 'pixel-dan.xml')
-    // this.load.multiatlas('sheet', 'sheet.json')
-    // this.load.spritesheet('tiles', 'tiles.png', {
-    //   frameWidth: 16,
-    //   frameHeight: 16,
-    // })
+    this.load.spritesheet('sheet', 'sheet.png', {
+      frameWidth: 9,
+      frameHeight: 9,
+    })
+    this.load.spritesheet('tiles', 'tiles.png', {
+      frameWidth: 8,
+      frameHeight: 8,
+    })
   }
 
   create() {
