@@ -16,19 +16,7 @@ export class Floor {
   }
 }
 
-const getFloorData = () => {
-  const data = [
-    new Array(8).fill(0).map(getTile),
-    new Array(8).fill(0).map(getTile),
-    new Array(8).fill(0).map(getTile),
-    new Array(8).fill(0).map(getTile),
-    new Array(8).fill(0).map(getTile),
-    new Array(8).fill(0).map(getTile),
-    new Array(8).fill(0).map(getTile),
-    new Array(8).fill(0).map(getTile),
-  ]
-  return data
-}
-
-const getTile = () => Phaser.Math.RND.weightedPick(TILES)
-const TILES = [0, 0, 0, 0, 0, 0]
+const getFloorData = () =>
+  Array.from({ length: 8 }, (_, row) =>
+    Array.from({ length: 8 }, (_, col) => (row + col) % 2),
+  )
