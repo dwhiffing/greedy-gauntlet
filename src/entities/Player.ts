@@ -30,10 +30,19 @@ export class Player extends Physics.Arcade.Sprite {
   }
 
   public takeDamage() {
+    this.setActive(false)
     if (`${this.frame.name}` === '1') {
       this.onDeath()
     } else {
+      this.setAlpha(0.5)
       this.setFrame(1)
+      this.sceneRef.time.addEvent({
+        delay: 500,
+        callback: () => {
+          this.setAlpha(1)
+          this.setActive(true)
+        },
+      })
       this.sceneRef.time.addEvent({
         delay: 3000,
         callback: () => this.setFrame(0),
@@ -42,8 +51,8 @@ export class Player extends Physics.Arcade.Sprite {
   }
 
   public onDeath = () => {
-    this.setActive(false)
     const s = this.sceneRef
+    this.setImmovable(true)
     const onUpdate = (_: any, p: number) => p === 1 && s.scene.start('Menu')
     s.tweens.add({
       targets: this,
@@ -59,7 +68,7 @@ export class Player extends Physics.Arcade.Sprite {
   }
 
   private handlePlayerInput(): void {
-    if (!this.body || !this.active) return
+    if (!this.body) return
 
     const m: PhaserMath.Vector2 = new PhaserMath.Vector2(0, 0)
 
