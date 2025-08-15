@@ -74,11 +74,11 @@ export class Player extends Physics.Arcade.Sprite {
 
     const m: PhaserMath.Vector2 = new PhaserMath.Vector2(0, 0)
 
-    if (Input.Keyboard.JustDown(this.keyW)) m.y = -1
-    else if (Input.Keyboard.JustDown(this.keyS)) m.y = 1
+    if (this.keyW.isDown) m.y = -1
+    else if (this.keyS.isDown) m.y = 1
 
-    if (Input.Keyboard.JustDown(this.keyA)) m.x = -1
-    else if (Input.Keyboard.JustDown(this.keyD)) m.x = 1
+    if (this.keyA.isDown) m.x = -1
+    else if (this.keyD.isDown) m.x = 1
 
     if (m.length() > 0) {
       const targetX = PhaserMath.Clamp(this.x + m.x * 8, 0, 56)
@@ -96,9 +96,11 @@ export class Player extends Physics.Arcade.Sprite {
       targets: this,
       x: targetX,
       y: targetY,
-      duration: 120,
+      duration: 150,
       onComplete: () => {
         this.isTweening = false
+        // Immediately check for held keys and move again if needed
+        this.handlePlayerInput()
       },
     })
   }
