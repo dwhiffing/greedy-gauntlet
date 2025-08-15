@@ -9,7 +9,7 @@ export class Player extends Physics.Arcade.Sprite {
   private keyD: Input.Keyboard.Key
 
   constructor(scene: Game) {
-    super(scene, 3 * 8, 3 * 8, 'sheet')
+    super(scene, 3 * 8, 3 * 8, 'sheet', 0)
     this.sceneRef = scene
     scene.add.existing(this)
     scene.physics.add.existing(this)
@@ -29,7 +29,29 @@ export class Player extends Physics.Arcade.Sprite {
     this.handlePlayerInput()
   }
 
-  public takeDamage() {}
+  public takeDamage() {
+    if (`${this.frame.name}` === '1') {
+      this.onDeath()
+    } else {
+      this.setFrame(1)
+      this.sceneRef.time.addEvent({
+        delay: 3000,
+        callback: () => this.setFrame(0),
+      })
+    }
+  }
+
+  public onDeath = () => {
+    this.setActive(false)
+    const s = this.sceneRef
+    const onUpdate = (_: any, p: number) => p === 1 && s.scene.start('Menu')
+    s.tweens.add({
+      targets: this,
+      alpha: 0,
+      duration: 500,
+      onComplete: () => s.cameras.main.fade(500, 0, 0, 0, true, onUpdate),
+    })
+  }
 
   public setOffsets(flip = false) {
     this.setFlipX(flip)
@@ -37,7 +59,7 @@ export class Player extends Physics.Arcade.Sprite {
   }
 
   private handlePlayerInput(): void {
-    if (!this.body) return
+    if (!this.body || !this.active) return
 
     const m: PhaserMath.Vector2 = new PhaserMath.Vector2(0, 0)
 

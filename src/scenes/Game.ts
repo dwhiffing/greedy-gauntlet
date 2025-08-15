@@ -45,8 +45,10 @@ export class Game extends Scene {
     this.physics.overlap(this.player, this.arrows, (_player, _arrow) => {
       const player = _player as Player
       const arrow = _arrow as Arrow
-      arrow.destroy()
-      player.takeDamage()
+      if (this.player.active) {
+        arrow.destroy()
+        player.takeDamage()
+      }
     })
   }
 

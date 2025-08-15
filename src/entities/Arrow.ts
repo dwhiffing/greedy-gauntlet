@@ -9,7 +9,7 @@ export class Arrow extends Physics.Arcade.Sprite {
   protected sceneRef: Game
 
   constructor(scene: Game) {
-    super(scene, 3 * 8, 3 * 8, 'sheet', 1)
+    super(scene, 3 * 8, 3 * 8, 'sheet', 2)
     this.sceneRef = scene
     scene.add.existing(this)
     scene.physics.add.existing(this)
