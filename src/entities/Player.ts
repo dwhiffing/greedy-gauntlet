@@ -67,8 +67,10 @@ export class Player extends Physics.Arcade.Sprite {
     this.setOrigin(flip ? -0.1 : 0.2, 0.2).setOffset(flip ? 1 : 3, 2)
   }
 
+  private isTweening: boolean = false
+
   private handlePlayerInput(): void {
-    if (!this.body) return
+    if (!this.body || this.isTweening) return
 
     const m: PhaserMath.Vector2 = new PhaserMath.Vector2(0, 0)
 
@@ -79,16 +81,25 @@ export class Player extends Physics.Arcade.Sprite {
     else if (Input.Keyboard.JustDown(this.keyD)) m.x = 1
 
     if (m.length() > 0) {
-      this.x += m.x * 8
-      this.y += m.y * 8
-      this.x = PhaserMath.Clamp(this.x, 0, 56)
-      this.y = PhaserMath.Clamp(this.y, 0, 56)
-      if (m.x !== 0) {
-        this.setOffsets(m.x < 0)
-      }
-      // this.play('player-walk', true)
-    } else {
-      // this.play('player-idle', true)
+      const targetX = PhaserMath.Clamp(this.x + m.x * 8, 0, 56)
+      const targetY = PhaserMath.Clamp(this.y + m.y * 8, 0, 56)
+      this.tweenTo(targetX, targetY, m.x)
     }
+  }
+
+  private tweenTo(targetX: number, targetY: number, dirX: number) {
+    this.isTweening = true
+    if (dirX !== 0) {
+      this.setOffsets(dirX < 0)
+    }
+    this.sceneRef.tweens.add({
+      targets: this,
+      x: targetX,
+      y: targetY,
+      duration: 120,
+      onComplete: () => {
+        this.isTweening = false
+      },
+    })
   }
 }
