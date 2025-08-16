@@ -38,7 +38,7 @@ export class TimerBorder extends Phaser.GameObjects.Graphics {
     const endAngle = startAngle + this.progress * Math.PI * 2
     this.moveTo(centerX, centerY)
     this.arc(centerX, centerY, radius, startAngle, endAngle, false)
-    this.fillStyle(0xcc2211, this.alpha)
+    this.fillStyle(0x000102, this.alpha)
     this.fillPath()
   }
 
@@ -47,7 +47,7 @@ export class TimerBorder extends Phaser.GameObjects.Graphics {
     this.setPosition(this.x, this.y)
     this.x = x * 8
     this.y = y * 8
-    this.alpha = 0.5
+    this.alpha = 0.35
     this.durationMs = durationMs
     this.redraw()
   }
