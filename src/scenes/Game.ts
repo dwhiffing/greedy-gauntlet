@@ -89,6 +89,7 @@ export class Game extends Scene {
 
     this.data.set('gameover', 0)
     this.data.set('score', 0)
+    this.playSound('game-start')
 
     this.player.onRevive()
     this.tweens.add({
@@ -187,7 +188,7 @@ export class Game extends Scene {
       (_player, _enemy) => {
         const player = _player as Player
         const enemy = _enemy as Arrow | Spike
-        if (this.player.active && enemy.isTangible()) {
+        if (this.player.isTangible && enemy.getIsTangible()) {
           enemy.takeDamage()
           player.takeDamage()
         }

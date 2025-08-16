@@ -46,7 +46,13 @@ export class Arrow extends Physics.Arcade.Sprite {
     this.isMoving = false
     this.sceneRef.time.addEvent({
       delay: delay,
-      callback: () => (this.isMoving = true),
+      callback: () => {
+        if (this.sceneRef.data.get('play-arrow-launch')) {
+          this.sceneRef.playSound('arrow-launch')
+          this.sceneRef.data.set('play-arrow-launch', false)
+        }
+        this.isMoving = true
+      },
     })
 
     if (direction === 0) {
@@ -71,5 +77,5 @@ export class Arrow extends Physics.Arcade.Sprite {
     }
   }
 
-  public isTangible = () => this.active
+  public getIsTangible = () => this.active
 }

@@ -38,6 +38,19 @@ export class Boot extends Scene {
       frameWidth: 8,
       frameHeight: 8,
     })
+    this.load.setPath('assets/audio')
+
+    this.load.audio('player-hit', 'player-hit.mp3')
+    this.load.audio('player-regen', 'player-regen.mp3')
+    this.load.audio('gameover', 'game-over.mp3')
+    this.load.audio('spike-spawn', 'attack-spawn.mp3')
+    this.load.audio('spike-launch', 'attack-launch.mp3')
+    this.load.audio('arrow-spawn', 'attack-spawn.mp3')
+    this.load.audio('arrow-launch', 'attack-launch.mp3')
+    this.load.audio('grab-coin', 'coin-hit.mp3')
+    this.load.audio('game-start', 'coin-hit.mp3')
+    this.load.audio('multi-down', 'multi-down.mp3')
+    this.load.audio('multi-up', 'multi-up.mp3')
   }
 
   create() {

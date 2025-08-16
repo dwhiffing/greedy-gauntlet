@@ -19,6 +19,7 @@ export class Player extends Physics.Arcade.Sprite {
   private lastMoveKey: 'up' | 'down' | 'left' | 'right' | null = null
   public multiIndex = 0
   public coinCombo = 0
+  public isTangible = true
   public hat: GameObjects.Sprite
   private isTweening: boolean = false
   private _wasMoving: boolean = false
@@ -75,11 +76,13 @@ export class Player extends Physics.Arcade.Sprite {
   }
 
   public async takeDamage() {
-    this.setActive(false)
+    this.isTangible = false
     this.sceneRef.camera.shake(200, 0.02, true)
     if (this.hat.alpha === 0) {
       this.onDeath()
     } else {
+      this.sceneRef.playSound('player-hit')
+
       this.setTintFill(0xffffff)
       this.hat.setAlpha(0)
 
@@ -87,10 +90,13 @@ export class Player extends Physics.Arcade.Sprite {
       this.resetTint()
 
       await this.sceneRef.sleep(250)
-      this.setActive(true)
+      this.isTangible = true
 
       await this.sceneRef.sleep(5000)
-      if (this.active) this.hat.setAlpha(1)
+      if (this.active) {
+        this.sceneRef.playSound('player-regen')
+        this.hat.setAlpha(1)
+      }
     }
   }
 
@@ -102,6 +108,7 @@ export class Player extends Physics.Arcade.Sprite {
 
   public async grabCoin() {
     this.updateMulti()
+    this.sceneRef.playSound('grab-coin')
     await this.sceneRef.sleep(150)
     this.resetTint()
   }
@@ -114,6 +121,7 @@ export class Player extends Physics.Arcade.Sprite {
 
     if (this.coinCombo >= COMBO_AMOUNTS[this.multiIndex]) {
       if (this.multiIndex < 6) {
+        this.sceneRef.playSound('multi-up')
         this.multiIndex++
         this.sceneRef.text.spawn(`${MULTIPLIERS[this.multiIndex]}X`, 0x00ff00)
       }
@@ -129,12 +137,14 @@ export class Player extends Physics.Arcade.Sprite {
       this.multiIndex--
       this.coinCombo = COMBO_AMOUNTS[this.multiIndex - 1] ?? 0
       this.sceneRef.text.spawn(`${MULTIPLIERS[this.multiIndex]}X`, 0xff0000)
+      this.sceneRef.playSound('multi-down')
       this.resetTint()
     }
   }
 
   public onRevive = () => {
     this.setImmovable(false).setActive(true)
+    this.isTangible = true
     this.sceneRef.tweens.add({
       targets: [this, this.hat],
       alpha: 1,
@@ -147,6 +157,9 @@ export class Player extends Physics.Arcade.Sprite {
     this.setImmovable(true)
     this.setAlpha(0)
     this.hat.setAlpha(0)
+    this.setActive(false)
+
+    this.sceneRef.playSound('gameover')
 
     s.add
       .particles(4, 4, 'sheet', {

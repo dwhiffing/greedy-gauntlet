@@ -27,6 +27,9 @@ export class SpikeSpawner extends BaseSpawner {
   spawnNextWave = () => {
     if (this.sceneRef.data.get('paused') === 1) return
 
+    this.sceneRef.playSound('spike-spawn')
+    this.sceneRef.data.set('play-arrow-launch', true)
+
     const RND = Phaser.Math.RND
     const type = RND.pick(['box'])
     if (type === 'row') {
