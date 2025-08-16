@@ -34,7 +34,7 @@ export class Game extends Scene {
     this.input.keyboard!.on('keydown-M', () => {
       this.game.sound.setMute(!this.game.sound.mute)
     })
-    this.input.keyboard!.once('keydown', this.startGame)
+    this.input.keyboard!.on('keydown', this.startGame)
 
     this.floor = new Floor(this)
     this.player = new Player(this)
@@ -43,7 +43,7 @@ export class Game extends Scene {
     this.title = this.add.image(32, 28, 'title').setDepth(10)
 
     this.titleText = this.add
-      .bitmapText(32, 64, 'pixel-dan', 'PRESS ANY KEY')
+      .bitmapText(32, 64, 'pixel-dan', 'PRESS ARROW KEY')
       .setTintFill(0xffffff)
       .setFontSize(5)
       .setOrigin(0.5, 1)
@@ -77,39 +77,41 @@ export class Game extends Scene {
     this.coinSpawner = new CoinSpawner(this)
 
     this.data.set('paused', 1)
+    this.data.set('gameover', 1)
     this.updateDifficulty(0)
 
     this.time.addEvent({ repeat: -1, delay: 100, callback: this.tick })
     this.time.addEvent({ repeat: -1, delay: 5, callback: this.arrowTick })
   }
 
-  startGame = () => {
-    this.data.set('paused', 0)
+  startGame = (e: any) => {
+    if (!e.key.includes('Arrow') || this.data.get('gameover') === 0) return
+
+    this.data.set('gameover', 0)
     this.data.set('score', 0)
-    this.data.set('waveTimer', 0)
-    this.data.set('arrowTick', 0)
 
     this.player.onRevive()
     this.tweens.add({
       targets: [this.titleText, this.scoreText, this.title],
       alpha: 0,
       duration: 500,
+      onComplete: () => {
+        this.data.set('paused', 0)
+        this.data.set('waveTimer', 0)
+        this.data.set('arrowTick', 0)
+      },
     })
   }
 
   gameover = () => {
+    this.title.y = 14
     this.data.set('paused', 1)
-
     this.scoreText.setText(`SCORE\n${this.data.get('score') ?? 0}`)
     this.tweens.add({
-      targets: [this.scoreText, this.title],
+      targets: [this.scoreText, this.title, this.titleText],
       alpha: 1,
-      duration: 500,
-    })
-    this.title.y = 14
-    this.time.delayedCall(2000, () => {
-      this.tweens.add({ targets: [this.titleText], alpha: 1, duration: 500 })
-      this.input.keyboard!.once('keydown', this.startGame)
+      duration: 1500,
+      onComplete: () => this.data.set('gameover', 1),
     })
   }
 
