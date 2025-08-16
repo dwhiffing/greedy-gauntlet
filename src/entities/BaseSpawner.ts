@@ -1,5 +1,6 @@
 import { Game } from '../scenes/Game'
 
+export type SpawnParams = { delay?: number; baseDelay?: number }
 export class BaseSpawner {
   private timer: number
   protected sceneRef: Game
@@ -15,9 +16,12 @@ export class BaseSpawner {
   spawn = (_index: number): void => {}
   spawnNextWave = () => {}
 
-  spawnMany = (indexes: number[], delay = 0) => {
+  spawnMany = (indexes: number[], params?: SpawnParams) => {
     indexes.forEach((i, idx) => {
-      this.scheduleSpawn(this.globalTick + idx * delay, i)
+      this.scheduleSpawn(
+        this.globalTick + idx * (params?.delay ?? 0) + (params?.baseDelay ?? 0),
+        i,
+      )
     })
   }
 
