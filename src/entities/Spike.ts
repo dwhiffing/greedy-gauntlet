@@ -29,7 +29,7 @@ export class Spike extends Physics.Arcade.Sprite {
           this.setFrame(5)
           this.setAlpha(1)
         }
-        if (this.age === this.lifetime * 1.2) {
+        if (this.age === this.lifetime + 1) {
           this._isTangible = false
           this.fadeOut()
         }
@@ -57,8 +57,8 @@ export class Spike extends Physics.Arcade.Sprite {
     this.sceneRef.tweens.add({
       targets: this,
       alpha: 0,
-      delay: 100,
-      duration: 250,
+      delay: 0,
+      duration: 200,
       onComplete: () => {
         this.setVisible(false)
         this.setActive(false)
