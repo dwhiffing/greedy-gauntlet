@@ -5,6 +5,8 @@ import { Arrow } from '../entities/Arrow'
 import { ArrowSpawner } from '../entities/ArrowSpawner'
 import { SpikeSpawner } from '../entities/SpikeSpawner'
 import { Spike } from '../entities/Spike'
+import { Coin } from '../entities/Coin'
+import { CoinSpawner } from '../entities/CoinSpawner'
 
 export class Game extends Scene {
   public camera!: Cameras.Scene2D.Camera
@@ -12,8 +14,10 @@ export class Game extends Scene {
   public player!: Player
   public arrows!: Physics.Arcade.Group
   public spikes!: Physics.Arcade.Group
+  public coins!: Physics.Arcade.Group
   public arrowSpawner!: ArrowSpawner
   public spikeSpawner!: SpikeSpawner
+  public coinSpawner!: CoinSpawner
   public globalTick!: number
 
   constructor() {
@@ -41,8 +45,14 @@ export class Game extends Scene {
       runChildUpdate: true,
     })
 
+    this.coins = this.physics.add.group({
+      classType: Coin,
+      runChildUpdate: true,
+    })
+
     this.arrowSpawner = new ArrowSpawner(this)
     this.spikeSpawner = new SpikeSpawner(this)
+    this.coinSpawner = new CoinSpawner(this)
 
     this.globalTick = 0
     this.time.addEvent({
@@ -54,6 +64,7 @@ export class Game extends Scene {
           callback: () => {
             this.arrowSpawner.tick()
             this.spikeSpawner.tick()
+            this.coinSpawner.tick()
           },
         })
         this.time.addEvent({
@@ -88,6 +99,14 @@ export class Game extends Scene {
         }
       },
     )
+    this.physics.overlap(this.player, this.coins, (_player, _coin) => {
+      const player = _player as Player
+      const coin = _coin as Coin
+      if (this.player.active && coin.active) {
+        coin.pickup()
+        player.grabCoin()
+      }
+    })
   }
 
   gameover = () => {

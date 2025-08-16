@@ -49,12 +49,6 @@ export class Player extends Physics.Arcade.Sprite {
     this.handlePlayerInput()
   }
 
-  private async sleep(ms: number) {
-    return new Promise((resolve) => {
-      this.sceneRef.time.addEvent({ callback: resolve, delay: ms })
-    })
-  }
-
   public async takeDamage() {
     this.setActive(false)
     if (`${this.frame.name}` === '1') {
@@ -75,7 +69,14 @@ export class Player extends Physics.Arcade.Sprite {
     }
   }
 
-  public onDeath = () => {
+  public async grabCoin() {
+    this.setTintFill(0xffaa00)
+
+    await this.sleep(200)
+    this.clearTint()
+  }
+
+  private onDeath = () => {
     const s = this.sceneRef
     this.setImmovable(true)
     this.setVisible(false)
@@ -93,7 +94,7 @@ export class Player extends Physics.Arcade.Sprite {
     s.gameover()
   }
 
-  public setOffsets(flip = false) {
+  private setOffsets(flip = false) {
     this.setFlipX(flip)
     this.setOrigin(flip ? -0.1 : 0.2, 0.2).setOffset(flip ? 1 : 3, 2)
   }
@@ -161,6 +162,12 @@ export class Player extends Physics.Arcade.Sprite {
         // Immediately check for held keys and move again if needed
         this.handlePlayerInput()
       },
+    })
+  }
+
+  private async sleep(ms: number) {
+    return new Promise((resolve) => {
+      this.sceneRef.time.addEvent({ callback: resolve, delay: ms })
     })
   }
 }
