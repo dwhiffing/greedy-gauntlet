@@ -88,7 +88,7 @@ export class Player extends Physics.Arcade.Sprite {
       this.setActive(true)
 
       await this.sceneRef.sleep(3000)
-      this.hat.setVisible(true)
+      if (this.active) this.hat.setVisible(true)
     }
   }
 
