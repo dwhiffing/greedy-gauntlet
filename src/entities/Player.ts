@@ -81,13 +81,13 @@ export class Player extends Physics.Arcade.Sprite {
       this.setTintFill(0xffffff)
       this.hat.setVisible(false)
 
-      await this.sleep(250)
+      await this.sceneRef.sleep(250)
       this.resetTint()
 
-      await this.sleep(250)
+      await this.sceneRef.sleep(250)
       this.setActive(true)
 
-      await this.sleep(3000)
+      await this.sceneRef.sleep(3000)
       this.hat.setVisible(true)
     }
   }
@@ -103,7 +103,7 @@ export class Player extends Physics.Arcade.Sprite {
     this.hat.setTint(0xffaa00)
 
     this.updateMulti()
-    await this.sleep(150)
+    await this.sceneRef.sleep(150)
     this.resetTint()
   }
 
@@ -222,12 +222,6 @@ export class Player extends Physics.Arcade.Sprite {
         // Immediately check for held keys and move again if needed
         this.handlePlayerInput()
       },
-    })
-  }
-
-  private async sleep(ms: number) {
-    return new Promise((resolve) => {
-      this.sceneRef.time.addEvent({ callback: resolve, delay: ms })
     })
   }
 }

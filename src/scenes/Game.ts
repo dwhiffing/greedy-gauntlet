@@ -67,9 +67,9 @@ export class Game extends Scene {
           repeat: -1,
           delay: 100,
           callback: () => {
-            this.arrowSpawner.tick()
+            // this.arrowSpawner.tick()
             this.spikeSpawner.tick()
-            this.coinSpawner.tick()
+            // this.coinSpawner.tick()
           },
         })
         this.time.addEvent({
@@ -124,5 +124,11 @@ export class Game extends Scene {
 
   playSound = (key: string, extra?: Phaser.Types.Sound.SoundConfig) => {
     if (document.hasFocus()) this.sound.play(key, extra)
+  }
+
+  async sleep(ms: number) {
+    return new Promise((resolve) => {
+      this.time.addEvent({ callback: resolve, delay: ms })
+    })
   }
 }
