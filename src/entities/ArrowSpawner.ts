@@ -30,7 +30,7 @@ export class ArrowSpawner extends BaseSpawner {
       this.getArrayWithRandomGap(gapSize),
       direction * 8,
     )
-    this.spawnMany(indexes, delay)
+    this.spawnMany(indexes, { delay })
   }
 
   getArrayWithRandomGap(gapSize: number): number[] {
