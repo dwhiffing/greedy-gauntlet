@@ -49,24 +49,29 @@ export class Player extends Physics.Arcade.Sprite {
     this.handlePlayerInput()
   }
 
-  public takeDamage() {
+  private async sleep(ms: number) {
+    return new Promise((resolve) => {
+      this.sceneRef.time.addEvent({ callback: resolve, delay: ms })
+    })
+  }
+
+  public async takeDamage() {
     this.setActive(false)
     if (`${this.frame.name}` === '1') {
       this.onDeath()
     } else {
-      this.setAlpha(0.5)
+      this.setTintFill(0xffffff)
       this.setFrame(1)
-      this.sceneRef.time.addEvent({
-        delay: 500,
-        callback: () => {
-          this.setAlpha(1)
-          this.setActive(true)
-        },
-      })
-      this.sceneRef.time.addEvent({
-        delay: 3000,
-        callback: () => this.setFrame(0),
-      })
+
+      await this.sleep(200)
+      this.clearTint()
+
+      await this.sleep(500)
+      this.setAlpha(1)
+      this.setActive(true)
+
+      await this.sleep(3000)
+      this.setFrame(0)
     }
   }
 
@@ -74,11 +79,20 @@ export class Player extends Physics.Arcade.Sprite {
     const s = this.sceneRef
     this.setImmovable(true)
     const onUpdate = (_: any, p: number) => p === 1 && s.scene.start('Menu')
-    s.tweens.add({
-      targets: this,
-      alpha: 0,
-      duration: 500,
-      onComplete: () => s.cameras.main.fade(500, 0, 0, 0, true, onUpdate),
+    this.setVisible(false)
+
+    s.add
+      .particles(4, 4, 'sheet', {
+        frame: 3,
+        lifespan: 400,
+        speed: 30,
+        scale: 1,
+        alpha: { start: 1, end: 0 },
+        angle: { start: 0, end: 360, steps: 6 },
+      })
+      .explode(6, this.x, this.y)
+    s.time.delayedCall(250, () => {
+      s.cameras.main.fade(500, 0, 0, 0, true, onUpdate)
     })
   }
 
@@ -90,7 +104,7 @@ export class Player extends Physics.Arcade.Sprite {
   private isTweening: boolean = false
 
   private handlePlayerInput(): void {
-    if (!this.body || this.isTweening) return
+    if (!this.body || this.isTweening || this.body.immovable) return
 
     const m: PhaserMath.Vector2 = new PhaserMath.Vector2(0, 0)
     const keyMap: {
