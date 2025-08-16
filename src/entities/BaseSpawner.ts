@@ -4,7 +4,7 @@ export class BaseSpawner {
   private timer: number
   protected sceneRef: Game
   private scheduledSpawns: { tick: number; index: number }[] = []
-  private globalTick: number = 0
+  public globalTick: number = 0
   public spawnRate = 20
 
   constructor(sceneRef: Game) {
@@ -17,11 +17,12 @@ export class BaseSpawner {
 
   spawnMany = (indexes: number[], delay = 0) => {
     indexes.forEach((i, idx) => {
-      this.scheduledSpawns.push({
-        tick: this.globalTick + idx * delay,
-        index: i,
-      })
+      this.scheduleSpawn(this.globalTick + idx * delay, i)
     })
+  }
+
+  protected scheduleSpawn(tick: number, index: number) {
+    this.scheduledSpawns.push({ tick, index })
   }
 
   tick = () => {
