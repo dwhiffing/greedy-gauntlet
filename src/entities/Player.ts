@@ -1,5 +1,13 @@
-import { Physics, Math as PhaserMath, Input } from 'phaser'
+import { Physics, Math as PhaserMath, Input, GameObjects } from 'phaser'
 import { Game } from '../scenes/Game'
+
+const COMBO_AMOUNTS = [2, 6, 12, 20, 30, 42]
+const COLORS = [
+  0xaa00ff, 0x0099ee, 0x00aa44, 0xffcc00, 0xff8800, 0xcc3300, 0xff00aa,
+]
+const HAT_COLORS = [
+  0x00aa44, 0xaa00ff, 0xcc3300, 0xff00aa, 0x0099ee, 0xffcc00, 0xff8800,
+]
 
 export class Player extends Physics.Arcade.Sprite {
   protected sceneRef: Game
@@ -8,15 +16,23 @@ export class Player extends Physics.Arcade.Sprite {
   private keyS: Input.Keyboard.Key
   private keyD: Input.Keyboard.Key
   private lastMoveKey: 'up' | 'down' | 'left' | 'right' | null = null
+  public multiIndex = 6
+  public coinCombo = 0
+  private hat: GameObjects.Sprite
 
   constructor(scene: Game) {
-    super(scene, 3 * 8, 3 * 8, 'sheet', 0)
+    super(scene, 3 * 8, 3 * 8, 'sheet', 1)
     this.sceneRef = scene
     scene.add.existing(this)
     scene.physics.add.existing(this)
-    this.setSize(5, 6)
+    this.hat = scene.add
+      .sprite(3 * 8, 3 * 8, 'sheet', 0)
+      .setOrigin(0.2, 0.2)
+      .setDepth(2)
+
+    this.resetTint()
+    this.setSize(5, 6).setDepth(2)
     this.setOffsets(false)
-    this.setDepth(2)
 
     if (!scene.input || !scene.input.keyboard) {
       throw new Error('Keyboard input system is not available.')
@@ -45,35 +61,60 @@ export class Player extends Physics.Arcade.Sprite {
     })
   }
 
+  public resetTint() {
+    this.setTint(COLORS.at(this.multiIndex))
+    this.hat.setTint(HAT_COLORS.at(this.multiIndex))
+  }
+
   public update(): void {
     this.handlePlayerInput()
   }
 
   public async takeDamage() {
     this.setActive(false)
-    if (`${this.frame.name}` === '1') {
+    if (!this.hat.visible) {
       this.onDeath()
     } else {
       this.setTintFill(0xffffff)
-      this.setFrame(1)
+      this.hat.setVisible(false)
 
-      await this.sleep(200)
-      this.clearTint()
+      await this.sleep(250)
+      this.resetTint()
 
-      await this.sleep(500)
-      this.setAlpha(1)
+      await this.sleep(250)
       this.setActive(true)
 
       await this.sleep(3000)
-      this.setFrame(0)
+      this.hat.setVisible(true)
     }
   }
 
-  public async grabCoin() {
-    this.setTintFill(0xffaa00)
+  public setTintFill(color = 0xffffff): this {
+    super.setTintFill(color)
+    this.hat.setTintFill(color)
+    return this
+  }
 
-    await this.sleep(200)
-    this.clearTint()
+  public async grabCoin() {
+    this.setTint(0xffaa00)
+    this.hat.setTint(0xffaa00)
+
+    await this.sleep(150)
+    this.updateMulti()
+  }
+
+  public async updateMulti() {
+    this.coinCombo++
+
+    if (this.coinCombo >= COMBO_AMOUNTS[this.multiIndex])
+      if (this.multiIndex < 6) this.multiIndex++
+    this.resetTint()
+  }
+
+  public async resetMulti() {
+    this.multiIndex--
+    this.coinCombo = COMBO_AMOUNTS[this.multiIndex - 1]
+    this.resetTint()
   }
 
   private onDeath = () => {
@@ -88,6 +129,7 @@ export class Player extends Physics.Arcade.Sprite {
         speed: 30,
         scale: 1,
         alpha: { start: 1, end: 0 },
+        tint: COLORS.at(this.multiIndex),
         angle: { start: 0, end: 360, steps: 6 },
       })
       .explode(6, this.x, this.y)
@@ -96,6 +138,7 @@ export class Player extends Physics.Arcade.Sprite {
 
   private setOffsets(flip = false) {
     this.setFlipX(flip)
+    this.hat.setFlipX(flip).setOrigin(flip ? -0.1 : 0.2, 0.2)
     this.setOrigin(flip ? -0.1 : 0.2, 0.2).setOffset(flip ? 1 : 3, 2)
   }
 
@@ -153,7 +196,7 @@ export class Player extends Physics.Arcade.Sprite {
       this.setOffsets(dirX < 0)
     }
     this.sceneRef.tweens.add({
-      targets: this,
+      targets: [this, this.hat],
       x: targetX,
       y: targetY,
       duration: 150,
