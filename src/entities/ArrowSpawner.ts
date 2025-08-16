@@ -8,9 +8,8 @@ const sec = [9, -1, -1, 9]
 export class ArrowSpawner extends BaseSpawner {
   constructor(sceneRef: Game) {
     super(sceneRef)
-    this.spawnRate = 30
   }
-  spawn = (index: number): void => {
+  spawn = (index: number, delay: number): void => {
     if (index === -1) return
 
     const arrow = this.sceneRef.arrows.get() as Arrow | null
@@ -19,7 +18,7 @@ export class ArrowSpawner extends BaseSpawner {
     const primary = direction === 1 ? 7 - (index % 8) : index % 8
     const x = isPri[direction] ? primary : sec[direction]
     const y = isPri[direction] ? sec[direction] : primary
-    arrow.spawn(x, y, direction)
+    arrow.spawn(x, y, direction, delay)
   }
 
   spawnNextWave = () => {

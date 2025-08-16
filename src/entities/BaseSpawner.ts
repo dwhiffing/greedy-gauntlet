@@ -5,13 +5,12 @@ export class BaseSpawner {
   protected sceneRef: Game
   private scheduledSpawns: { tick: number; index: number }[] = []
   public globalTick: number = 0
-  public spawnRate = 20
 
   constructor(sceneRef: Game) {
     this.sceneRef = sceneRef
   }
 
-  spawn = (_index: number): void => {}
+  spawn = (_index: number, _delay: number): void => {}
   spawnNextWave = () => {}
 
   spawnMany = (indexes: number[], params?: SpawnParams) => {
@@ -30,7 +29,7 @@ export class BaseSpawner {
   tick = () => {
     this.scheduledSpawns = this.scheduledSpawns.filter((spawn) => {
       if (spawn.index > -1 && spawn.tick === this.globalTick) {
-        this.spawn(spawn.index)
+        this.spawn(spawn.index, this.sceneRef.data.get('attackDelay') * 100)
         return false
       }
       return true

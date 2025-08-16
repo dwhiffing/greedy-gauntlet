@@ -100,9 +100,6 @@ export class Player extends Physics.Arcade.Sprite {
   }
 
   public async grabCoin() {
-    this.setTint(0xffaa00)
-    this.hat.setTint(0xffaa00)
-
     this.updateMulti()
     await this.sceneRef.sleep(150)
     this.resetTint()
@@ -217,7 +214,7 @@ export class Player extends Physics.Arcade.Sprite {
       targets: [this, this.hat],
       x: targetX,
       y: targetY,
-      duration: 150,
+      duration: 150 - this.sceneRef.data.get('difficulty') * 15,
       onComplete: () => {
         this.isTweening = false
         // Immediately check for held keys and move again if needed

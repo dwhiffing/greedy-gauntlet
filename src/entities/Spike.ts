@@ -29,7 +29,10 @@ export class Spike extends Physics.Arcade.Sprite {
           this.setFrame(5)
           this.setAlpha(1)
         }
-        if (this.age === this.lifetime + 1) {
+        if (
+          this.age ===
+          this.lifetime + (5 - this.sceneRef.data.get('difficulty'))
+        ) {
           this._isTangible = false
           this.fadeOut()
         }
@@ -38,10 +41,11 @@ export class Spike extends Physics.Arcade.Sprite {
     })
   }
 
-  public spawn(x: number, y: number): void {
+  public spawn(x: number, y: number, delay: number): void {
     this.setPosition(x * 8, y * 8).setVelocity(0, 0)
     this.setVisible(true).setActive(true).setFrame(4).setAlpha(0)
 
+    this.lifetime = delay / 100
     this.age = 0
     this.sceneRef.tweens.add({ targets: this, alpha: 0.7, duration: 250 })
     this.timerBorder.reset(x, y, this.lifetime * 100)

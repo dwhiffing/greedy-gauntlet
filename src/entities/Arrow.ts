@@ -31,7 +31,12 @@ export class Arrow extends Physics.Arcade.Sprite {
     this.setVisible(false)
   }
 
-  public spawn(x: number, y: number, direction: 0 | 1 | 2 | 3): void {
+  public spawn(
+    x: number,
+    y: number,
+    direction: 0 | 1 | 2 | 3,
+    delay: number,
+  ): void {
     this.direction = direction
     this.setPosition(x * 8, y * 8)
       .setVelocity(0, 0)
@@ -40,18 +45,18 @@ export class Arrow extends Physics.Arcade.Sprite {
 
     this.isMoving = false
     this.sceneRef.time.addEvent({
-      delay: 1000,
+      delay: delay,
       callback: () => (this.isMoving = true),
     })
 
     if (direction === 0) {
-      this.timerBorder.reset(x, y - 2, 1000)
+      this.timerBorder.reset(x, y - 2, delay)
     } else if (direction === 1) {
-      this.timerBorder.reset(x + 1, y, 1000)
+      this.timerBorder.reset(x + 1, y, delay)
     } else if (direction === 2) {
-      this.timerBorder.reset(x, y + 1, 1000)
+      this.timerBorder.reset(x, y + 1, delay)
     } else if (direction === 3) {
-      this.timerBorder.reset(x - 2, y, 1000)
+      this.timerBorder.reset(x - 2, y, delay)
     }
 
     this.setFlipX(direction === 3)

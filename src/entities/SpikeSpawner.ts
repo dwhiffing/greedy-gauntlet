@@ -5,10 +5,9 @@ import { Spike } from './Spike'
 export class SpikeSpawner extends BaseSpawner {
   constructor(sceneRef: Game) {
     super(sceneRef)
-    this.spawnRate = 50
   }
 
-  spawn = (index: number): void => {
+  spawn = (index: number, delay: number): void => {
     if (index === -1) return
 
     const x = index % 8
@@ -22,7 +21,7 @@ export class SpikeSpawner extends BaseSpawner {
 
     const spike = this.sceneRef.spikes.get() as Spike | null
     if (!spike) return
-    spike.spawn(x, y)
+    spike.spawn(x, y, delay)
   }
 
   spawnNextWave = () => {

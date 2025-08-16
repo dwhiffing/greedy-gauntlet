@@ -5,7 +5,6 @@ import { Coin } from './Coin'
 export class CoinSpawner extends BaseSpawner {
   constructor(sceneRef: Game) {
     super(sceneRef)
-    this.spawnRate = 1
   }
 
   spawn = (index: number): void => {
@@ -20,7 +19,6 @@ export class CoinSpawner extends BaseSpawner {
   }
 
   spawnNextWave = () => {
-    const delay = 0
     const coins = this.sceneRef.coins.getChildren() as Coin[]
     const activeCoins = coins.filter((c) => c.active)
     if (activeCoins.length > 0) return
@@ -35,7 +33,7 @@ export class CoinSpawner extends BaseSpawner {
       )
       const isNearPlayer = Math.abs(x - px) <= 1 && Math.abs(y - py) <= 1
       if (!isNearPlayer && !isOnCoin) {
-        this.spawnMany([index], delay)
+        this.spawnMany([index])
         break
       }
     }

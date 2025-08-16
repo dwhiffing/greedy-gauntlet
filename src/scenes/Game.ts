@@ -57,39 +57,76 @@ export class Game extends Scene {
 
     this.data.set('score', 0)
     this.data.set('seconds', 0)
-    this.data.set('difficulty', 0)
     this.data.set('waveTimer', 0)
-    this.data.set('waveRate', 20)
+    this.data.set('arrowTick', 0)
+    this.updateDifficulty(0)
 
     this.time.addEvent({
       delay: 500,
       callback: () => {
         this.time.addEvent({ repeat: -1, delay: 100, callback: this.tick })
-        this.time.addEvent({ repeat: -1, delay: 50, callback: this.arrowTick })
+        this.time.addEvent({ repeat: -1, delay: 5, callback: this.arrowTick })
       },
     })
   }
 
+  updateDifficulty(n: number) {
+    this.data.set('difficulty', n)
+    const d = this.data.get('difficulty')
+    if (d === 0) {
+      this.data.set('waveRate', 35)
+      this.data.set('attackDelay', 20)
+      this.data.set('arrowSpeed', 5)
+    } else if (d === 1) {
+      this.data.set('waveRate', 20)
+      this.data.set('attackDelay', 15)
+      this.data.set('arrowSpeed', 4)
+    } else if (d === 2) {
+      this.data.set('waveRate', 15)
+      this.data.set('attackDelay', 10)
+      this.data.set('arrowSpeed', 3)
+    } else if (d === 3) {
+      this.data.set('waveRate', 10)
+      this.data.set('attackDelay', 5)
+      this.data.set('arrowSpeed', 2)
+    }
+  }
+
   tick = () => {
     this.data.inc('ticks', 1)
-    if (this.data.get('ticks') === 600) this.data.inc('difficulty')
-    if (this.data.get('ticks') === 3000) this.data.inc('difficulty')
-    if (this.data.get('ticks') === 6000) this.data.inc('difficulty')
+    if (this.data.get('ticks') === 600) this.updateDifficulty(1)
+    if (this.data.get('ticks') === 3000) this.updateDifficulty(2)
+    if (this.data.get('ticks') === 6000) this.updateDifficulty(3)
 
     this.arrowSpawner.tick()
     this.spikeSpawner.tick()
-    // this.coinSpawner.tick()
+    this.coinSpawner.tick()
+    this.coinSpawner.spawnNextWave()
 
     if (this.data.get('waveTimer') === 0) {
       this.data.set('waveTimer', this.data.get('waveRate'))
-      this.arrowSpawner.spawnNextWave()
-      // this.spikeSpawner.spawnNextWave()
+      const d = this.data.get('difficulty')
+      if (d === 0) {
+        this.arrowSpawner.spawnNextWave()
+      } else if (d === 3) {
+        this.arrowSpawner.spawnNextWave()
+        this.spikeSpawner.spawnNextWave()
+      } else {
+        if (Phaser.Math.RND.between(0, 1) === 0) {
+          this.arrowSpawner.spawnNextWave()
+        } else {
+          this.spikeSpawner.spawnNextWave()
+        }
+      }
     }
 
     this.data.inc('waveTimer', -1)
   }
 
   arrowTick = () => {
+    this.data.inc('arrowTick', -1)
+    if (this.data.get('arrowTick') > 0) return
+    this.data.set('arrowTick', this.data.get('arrowSpeed'))
     this.arrows.children.each((arrow: Phaser.GameObjects.GameObject) => {
       const a = arrow as Arrow
       if (a.active) a.move()
