@@ -7,6 +7,7 @@ export class Player extends Physics.Arcade.Sprite {
   private keyA: Input.Keyboard.Key
   private keyS: Input.Keyboard.Key
   private keyD: Input.Keyboard.Key
+  private lastMoveKey: 'up' | 'down' | 'left' | 'right' | null = null
 
   constructor(scene: Game) {
     super(scene, 3 * 8, 3 * 8, 'sheet', 0)
@@ -15,6 +16,7 @@ export class Player extends Physics.Arcade.Sprite {
     scene.physics.add.existing(this)
     this.setSize(5, 6)
     this.setOffsets(false)
+    this.setDepth(2)
 
     if (!scene.input || !scene.input.keyboard) {
       throw new Error('Keyboard input system is not available.')
@@ -23,6 +25,24 @@ export class Player extends Physics.Arcade.Sprite {
     this.keyA = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.LEFT)
     this.keyS = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.DOWN)
     this.keyD = scene.input.keyboard.addKey(Input.Keyboard.KeyCodes.RIGHT)
+
+    // Listen for keydown events to track last pressed movement key
+    scene.input.keyboard.on('keydown', (event: KeyboardEvent) => {
+      switch (event.code) {
+        case 'ArrowUp':
+          this.lastMoveKey = 'up'
+          break
+        case 'ArrowDown':
+          this.lastMoveKey = 'down'
+          break
+        case 'ArrowLeft':
+          this.lastMoveKey = 'left'
+          break
+        case 'ArrowRight':
+          this.lastMoveKey = 'right'
+          break
+      }
+    })
   }
 
   public update(): void {
@@ -73,12 +93,40 @@ export class Player extends Physics.Arcade.Sprite {
     if (!this.body || this.isTweening) return
 
     const m: PhaserMath.Vector2 = new PhaserMath.Vector2(0, 0)
+    const keyMap: {
+      key: Input.Keyboard.Key
+      dir: 'up' | 'down' | 'left' | 'right'
+      vec: [number, number]
+    }[] = [
+      { key: this.keyW, dir: 'up', vec: [0, -1] },
+      { key: this.keyS, dir: 'down', vec: [0, 1] },
+      { key: this.keyA, dir: 'left', vec: [-1, 0] },
+      { key: this.keyD, dir: 'right', vec: [1, 0] },
+    ]
 
-    if (this.keyW.isDown) m.y = -1
-    else if (this.keyS.isDown) m.y = 1
-
-    if (this.keyA.isDown) m.x = -1
-    else if (this.keyD.isDown) m.x = 1
+    let found = false
+    // Try lastMoveKey first
+    if (this.lastMoveKey) {
+      for (const { key, dir, vec } of keyMap) {
+        if (dir === this.lastMoveKey && key.isDown) {
+          m.x = vec[0]
+          m.y = vec[1]
+          found = true
+          break
+        }
+      }
+    }
+    // If lastMoveKey is released, fall back to any held key (priority order)
+    if (!found) {
+      for (const { key, dir, vec } of keyMap) {
+        if (key.isDown) {
+          m.x = vec[0]
+          m.y = vec[1]
+          this.lastMoveKey = dir
+          break
+        }
+      }
+    }
 
     if (m.length() > 0) {
       const targetX = PhaserMath.Clamp(this.x + m.x * 8, 0, 56)
