@@ -6,7 +6,6 @@ const _vy = [-1, 0, 1, 0]
 
 export class Arrow extends Physics.Arcade.Sprite {
   protected sceneRef: Game
-  static globalTick = 0
 
   private lastMoveTick = 0
   public direction: 0 | 1 | 2 | 3 = 0
@@ -17,23 +16,32 @@ export class Arrow extends Physics.Arcade.Sprite {
     this.sceneRef = scene
     scene.add.existing(this)
     scene.physics.add.existing(this)
+    this.setDepth(1)
   }
 
   public update(): void {
     if (
-      Arrow.globalTick % this.speed === 0 &&
-      Arrow.globalTick !== this.lastMoveTick
+      this.sceneRef.globalTick % this.speed === 0 &&
+      this.sceneRef.globalTick !== this.lastMoveTick
     ) {
-      this.lastMoveTick = Arrow.globalTick
+      this.lastMoveTick = this.sceneRef.globalTick
       this.x += _vx[this.direction]
       this.y += _vy[this.direction]
     }
   }
 
+  public takeDamage(): void {
+    this.setActive(false)
+    this.setVisible(false)
+  }
+
   public spawn(x: number, y: number, direction: 0 | 1 | 2 | 3): void {
     this.direction = direction
-    this.lastMoveTick = Arrow.globalTick
-    this.setPosition(x * 8, y * 8).setVelocity(0, 0)
+    this.lastMoveTick = this.sceneRef.globalTick
+    this.setPosition(x * 8, y * 8)
+      .setVelocity(0, 0)
+      .setActive(true)
+      .setVisible(true)
 
     this.setFlipX(direction === 3)
     if (direction === 0) {
@@ -46,4 +54,6 @@ export class Arrow extends Physics.Arcade.Sprite {
       this.setSize(4, 2).setOrigin(0.9, 0.1).setOffset(1, 3).setAngle(0)
     }
   }
+
+  public isTangible = () => this.active
 }

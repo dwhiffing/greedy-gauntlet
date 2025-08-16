@@ -1,21 +1,16 @@
-import { Arrow } from './Arrow'
 import { Game } from '../scenes/Game'
+import { Arrow } from './Arrow'
+import { BaseSpawner } from './BaseSpawner'
 
 const isPri = [true, false, true, false]
 const sec = [9, -1, -1, 9]
 
-export class ArrowSpawner {
-  private timer: number
-  protected sceneRef: Game
-  private scheduledSpawns: { tick: number; index: number }[] = []
-  private globalTick: number = 0
-
+export class ArrowSpawner extends BaseSpawner {
   constructor(sceneRef: Game) {
-    this.sceneRef = sceneRef
-    this.timer = 0
+    super(sceneRef)
+    this.spawnRate = 10
   }
-
-  spawnArrow = (index: number): void => {
+  spawn = (index: number): void => {
     if (index === -1) return
 
     const arrow = this.sceneRef.arrows.get() as Arrow | null
@@ -27,7 +22,7 @@ export class ArrowSpawner {
     arrow.spawn(x, y, direction)
   }
 
-  spawnArrows = () => {
+  spawnNextWave = () => {
     const direction = Phaser.Math.RND.integerInRange(0, 3)
     const gapSize = 3
     const delay = 1
@@ -35,27 +30,7 @@ export class ArrowSpawner {
       this.getArrayWithRandomGap(gapSize),
       direction * 8,
     )
-    indexes.forEach((i, idx) => {
-      this.scheduledSpawns.push({
-        tick: this.globalTick + idx * delay,
-        index: i,
-      })
-    })
-  }
-
-  tick = () => {
-    this.globalTick++
-    if (this.timer-- === 0) {
-      this.timer = 20
-      this.spawnArrows()
-    }
-    this.scheduledSpawns = this.scheduledSpawns.filter((spawn) => {
-      if (spawn.index > -1 && spawn.tick === this.globalTick) {
-        this.spawnArrow(spawn.index)
-        return false
-      }
-      return true
-    })
+    this.spawnMany(indexes, delay)
   }
 
   getArrayWithRandomGap(gapSize: number): number[] {
@@ -68,7 +43,4 @@ export class ArrowSpawner {
     }
     return arr
   }
-
-  addToEach = (arr: number[], value = 0) =>
-    arr.map((n) => (n === -1 ? -1 : n + value))
 }
