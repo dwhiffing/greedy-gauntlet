@@ -15,7 +15,7 @@ export class Spike extends Physics.Arcade.Sprite {
     scene.add.existing(this)
     scene.physics.add.existing(this)
 
-    this.setOrigin(0, 0).setSize(3, 3).setOffset(3, 2).setDepth(1)
+    this.setOrigin(0, 0).setSize(3, 3).setOffset(3, 2)
     this.timerBorder = new TimerBorder(scene)
 
     this.sceneRef.time.addEvent({
@@ -37,20 +37,13 @@ export class Spike extends Physics.Arcade.Sprite {
     })
   }
 
-  public spawn(x: number, y: number, flip = false): void {
+  public spawn(x: number, y: number): void {
     this.setPosition(x * 8, y * 8).setVelocity(0, 0)
-    this.setVisible(true).setActive(true).setFrame(4)
+    this.setVisible(true).setActive(true).setFrame(4).setAlpha(0)
 
     this.age = 0
-
-    this.setAlpha(0)
-    this.sceneRef.tweens.add({
-      targets: this,
-      alpha: 1,
-      duration: 150,
-    })
-
-    this.timerBorder.reset(x, y, this.lifetime * 100, flip)
+    this.sceneRef.tweens.add({ targets: this, alpha: 1, duration: 150 })
+    this.timerBorder.reset(x, y, this.lifetime * 100)
   }
 
   public takeDamage(): void {

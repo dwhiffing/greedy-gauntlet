@@ -90,6 +90,13 @@ export class Game extends Scene {
     )
   }
 
+  gameover = () => {
+    const onUpdate = (_: any, p: number) => p === 1 && this.scene.start('Menu')
+    this.time.delayedCall(250, () => {
+      this.cameras.main.fade(500, 0, 0, 0, true, onUpdate)
+    })
+  }
+
   playSound = (key: string, extra?: Phaser.Types.Sound.SoundConfig) => {
     if (document.hasFocus()) this.sound.play(key, extra)
   }

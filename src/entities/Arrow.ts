@@ -1,11 +1,14 @@
 import { Physics } from 'phaser'
 import { Game } from '../scenes/Game'
+import { TimerBorder } from './TimerBorder'
 
 const _vx = [0, 1, 0, -1]
 const _vy = [-1, 0, 1, 0]
 
 export class Arrow extends Physics.Arcade.Sprite {
   protected sceneRef: Game
+  public timerBorder: TimerBorder
+  public isMoving = false
   public direction: 0 | 1 | 2 | 3 = 0
 
   constructor(scene: Game) {
@@ -14,9 +17,11 @@ export class Arrow extends Physics.Arcade.Sprite {
     scene.add.existing(this)
     scene.physics.add.existing(this)
     this.setDepth(1)
+    this.timerBorder = new TimerBorder(this.sceneRef)
   }
 
   public move() {
+    if (!this.isMoving) return
     this.x += _vx[this.direction]
     this.y += _vy[this.direction]
   }
@@ -32,6 +37,22 @@ export class Arrow extends Physics.Arcade.Sprite {
       .setVelocity(0, 0)
       .setActive(true)
       .setVisible(true)
+
+    this.isMoving = false
+    this.sceneRef.time.addEvent({
+      delay: 1000,
+      callback: () => (this.isMoving = true),
+    })
+
+    if (direction === 0) {
+      this.timerBorder.reset(x, y - 2, 1000)
+    } else if (direction === 1) {
+      this.timerBorder.reset(x + 1, y, 1000)
+    } else if (direction === 2) {
+      this.timerBorder.reset(x, y + 1, 1000)
+    } else if (direction === 3) {
+      this.timerBorder.reset(x - 2, y, 1000)
+    }
 
     this.setFlipX(direction === 3)
     if (direction === 0) {

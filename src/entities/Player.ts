@@ -78,7 +78,6 @@ export class Player extends Physics.Arcade.Sprite {
   public onDeath = () => {
     const s = this.sceneRef
     this.setImmovable(true)
-    const onUpdate = (_: any, p: number) => p === 1 && s.scene.start('Menu')
     this.setVisible(false)
 
     s.add
@@ -91,9 +90,7 @@ export class Player extends Physics.Arcade.Sprite {
         angle: { start: 0, end: 360, steps: 6 },
       })
       .explode(6, this.x, this.y)
-    s.time.delayedCall(250, () => {
-      s.cameras.main.fade(500, 0, 0, 0, true, onUpdate)
-    })
+    s.gameover()
   }
 
   public setOffsets(flip = false) {

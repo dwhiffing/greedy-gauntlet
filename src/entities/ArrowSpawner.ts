@@ -8,7 +8,7 @@ const sec = [9, -1, -1, 9]
 export class ArrowSpawner extends BaseSpawner {
   constructor(sceneRef: Game) {
     super(sceneRef)
-    this.spawnRate = 10
+    this.spawnRate = 30
   }
   spawn = (index: number): void => {
     if (index === -1) return
@@ -25,7 +25,7 @@ export class ArrowSpawner extends BaseSpawner {
   spawnNextWave = () => {
     const direction = Phaser.Math.RND.integerInRange(0, 3)
     const gapSize = 3
-    const delay = 1
+    const delay = 0
     const indexes = this.addToEach(
       this.getArrayWithRandomGap(gapSize),
       direction * 8,
