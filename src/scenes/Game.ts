@@ -56,6 +56,19 @@ export class Game extends Scene {
             this.spikeSpawner.tick()
           },
         })
+        this.time.addEvent({
+          repeat: -1,
+          delay: 50,
+          callback: () => {
+            this.arrows.children.each(
+              (arrow: Phaser.GameObjects.GameObject) => {
+                const a = arrow as Arrow
+                if (a.active) a.move()
+                return null
+              },
+            )
+          },
+        })
       },
     })
   }

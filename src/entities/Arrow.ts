@@ -6,10 +6,7 @@ const _vy = [-1, 0, 1, 0]
 
 export class Arrow extends Physics.Arcade.Sprite {
   protected sceneRef: Game
-
-  private lastMoveTick = 0
   public direction: 0 | 1 | 2 | 3 = 0
-  public speed = 3
 
   constructor(scene: Game) {
     super(scene, 3 * 8, 3 * 8, 'sheet', 2)
@@ -19,15 +16,9 @@ export class Arrow extends Physics.Arcade.Sprite {
     this.setDepth(1)
   }
 
-  public update(): void {
-    if (
-      this.sceneRef.globalTick % this.speed === 0 &&
-      this.sceneRef.globalTick !== this.lastMoveTick
-    ) {
-      this.lastMoveTick = this.sceneRef.globalTick
-      this.x += _vx[this.direction]
-      this.y += _vy[this.direction]
-    }
+  public move() {
+    this.x += _vx[this.direction]
+    this.y += _vy[this.direction]
   }
 
   public takeDamage(): void {
@@ -37,7 +28,6 @@ export class Arrow extends Physics.Arcade.Sprite {
 
   public spawn(x: number, y: number, direction: 0 | 1 | 2 | 3): void {
     this.direction = direction
-    this.lastMoveTick = this.sceneRef.globalTick
     this.setPosition(x * 8, y * 8)
       .setVelocity(0, 0)
       .setActive(true)

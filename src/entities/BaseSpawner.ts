@@ -12,7 +12,7 @@ export class BaseSpawner {
     this.timer = 0
   }
 
-  spawn = (index: number): void => {}
+  spawn = (_index: number): void => {}
   spawnNextWave = () => {}
 
   spawnMany = (indexes: number[], delay = 0) => {
