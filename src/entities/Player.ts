@@ -75,6 +75,7 @@ export class Player extends Physics.Arcade.Sprite {
 
   public async takeDamage() {
     this.setActive(false)
+    this.sceneRef.camera.shake(200, 0.02, true)
     if (!this.hat.visible) {
       this.onDeath()
     } else {
