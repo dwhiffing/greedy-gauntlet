@@ -89,7 +89,7 @@ export class Player extends Physics.Arcade.Sprite {
       await this.sceneRef.sleep(250)
       this.setActive(true)
 
-      await this.sceneRef.sleep(3000)
+      await this.sceneRef.sleep(5000)
       if (this.active) this.hat.setAlpha(1)
     }
   }
