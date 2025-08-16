@@ -20,6 +20,8 @@ export class Player extends Physics.Arcade.Sprite {
   public multiIndex = 0
   public coinCombo = 0
   private hat: GameObjects.Sprite
+  private isTweening: boolean = false
+  private _wasMoving: boolean = false
 
   constructor(scene: Game) {
     super(scene, 3 * 8, 3 * 8, 'sheet', 1)
@@ -153,8 +155,6 @@ export class Player extends Physics.Arcade.Sprite {
     this.setOrigin(flip ? -0.1 : 0.2, 0.2).setOffset(flip ? 1 : 3, 2)
   }
 
-  private isTweening: boolean = false
-
   private handlePlayerInput(): void {
     if (!this.body || this.isTweening || this.body.immovable) return
 
@@ -198,11 +198,17 @@ export class Player extends Physics.Arcade.Sprite {
       const targetX = PhaserMath.Clamp(this.x + m.x * 8, 0, 56)
       const targetY = PhaserMath.Clamp(this.y + m.y * 8, 0, 56)
       this.tweenTo(targetX, targetY, m.x)
+      this._wasMoving = true
+    } else if (this._wasMoving) {
+      this.play('player-idle', true)
+      this._wasMoving = false
     }
   }
 
   private tweenTo(targetX: number, targetY: number, dirX: number) {
     this.isTweening = true
+    this.play('player-walk', true)
+
     if (dirX !== 0) {
       this.setOffsets(dirX < 0)
     }

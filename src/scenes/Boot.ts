@@ -40,6 +40,21 @@ export class Boot extends Scene {
   }
 
   create() {
+    this.anims.create({
+      key: 'player-walk',
+      frames: [
+        { key: 'sheet', frame: 6 },
+        { key: 'sheet', frame: 7 },
+      ],
+      frameRate: 8,
+      repeat: -1,
+    })
+    this.anims.create({
+      key: 'player-idle',
+      frames: [{ key: 'sheet', frame: 1 }],
+      frameRate: 10,
+      repeat: -1,
+    })
     // this.scene.start('Game')
     // this.sound.play('music', { loop: true, volume: 0.5 })
     this.scene.start('Menu')
