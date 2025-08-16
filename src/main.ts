@@ -1,5 +1,4 @@
 import { Game as GameScene } from './scenes/Game'
-import { Menu as MenuScene } from './scenes/Menu'
 import { Boot as BootScene } from './scenes/Boot'
 import { Game, Types } from 'phaser'
 
@@ -15,7 +14,7 @@ const config: Types.Core.GameConfig = {
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
   physics: { default: 'arcade', arcade: { debug: false } },
-  scene: [BootScene, MenuScene, GameScene],
+  scene: [BootScene, GameScene],
 }
 
 export default new Game(config)

@@ -1,4 +1,4 @@
-import { Cameras, Physics, Scene } from 'phaser'
+import { Cameras, GameObjects, Physics, Scene } from 'phaser'
 import { Floor } from '../entities/Floor'
 import { Player } from '../entities/Player'
 import { Arrow } from '../entities/Arrow'
@@ -20,6 +20,9 @@ export class Game extends Scene {
   public arrowSpawner!: ArrowSpawner
   public spikeSpawner!: SpikeSpawner
   public coinSpawner!: CoinSpawner
+  public titleText!: GameObjects.BitmapText
+  public scoreText!: GameObjects.BitmapText
+  public title!: GameObjects.Image
 
   constructor() {
     super('Game')
@@ -31,10 +34,28 @@ export class Game extends Scene {
     this.input.keyboard!.on('keydown-M', () => {
       this.game.sound.setMute(!this.game.sound.mute)
     })
+    this.input.keyboard!.once('keydown', this.startGame)
 
     this.floor = new Floor(this)
     this.player = new Player(this)
     this.text = new FadingBitmapText(this)
+
+    this.title = this.add.image(32, 28, 'title').setDepth(10)
+
+    this.titleText = this.add
+      .bitmapText(32, 64, 'pixel-dan', 'PRESS ANY KEY')
+      .setTintFill(0xffffff)
+      .setFontSize(5)
+      .setOrigin(0.5, 1)
+      .setDepth(10)
+
+    this.scoreText = this.add
+      .bitmapText(32, 42, 'pixel-dan', '')
+      .setCenterAlign()
+      .setTintFill(0xffffff)
+      .setFontSize(5)
+      .setOrigin(0.5, 0.5)
+      .setDepth(10)
 
     this.arrows = this.physics.add.group({
       classType: Arrow,
@@ -55,18 +76,40 @@ export class Game extends Scene {
     this.spikeSpawner = new SpikeSpawner(this)
     this.coinSpawner = new CoinSpawner(this)
 
-    this.data.set('score', 0)
-    this.data.set('seconds', 0)
-    this.data.set('waveTimer', 0)
-    this.data.set('arrowTick', 0)
+    this.data.set('paused', 1)
     this.updateDifficulty(0)
 
-    this.time.addEvent({
-      delay: 500,
-      callback: () => {
-        this.time.addEvent({ repeat: -1, delay: 100, callback: this.tick })
-        this.time.addEvent({ repeat: -1, delay: 5, callback: this.arrowTick })
-      },
+    this.time.addEvent({ repeat: -1, delay: 100, callback: this.tick })
+    this.time.addEvent({ repeat: -1, delay: 5, callback: this.arrowTick })
+  }
+
+  startGame = () => {
+    this.data.set('paused', 0)
+    this.data.set('score', 0)
+    this.data.set('waveTimer', 0)
+    this.data.set('arrowTick', 0)
+
+    this.player.onRevive()
+    this.tweens.add({
+      targets: [this.titleText, this.scoreText, this.title],
+      alpha: 0,
+      duration: 500,
+    })
+  }
+
+  gameover = () => {
+    this.data.set('paused', 1)
+
+    this.scoreText.setText(`SCORE\n${this.data.get('score') ?? 0}`)
+    this.tweens.add({
+      targets: [this.scoreText, this.title],
+      alpha: 1,
+      duration: 500,
+    })
+    this.title.y = 14
+    this.time.delayedCall(2000, () => {
+      this.tweens.add({ targets: [this.titleText], alpha: 1, duration: 500 })
+      this.input.keyboard!.once('keydown', this.startGame)
     })
   }
 
@@ -93,10 +136,9 @@ export class Game extends Scene {
   }
 
   tick = () => {
-    this.data.inc('ticks', 1)
-    if (this.data.get('ticks') === 600) this.updateDifficulty(1)
-    if (this.data.get('ticks') === 3000) this.updateDifficulty(2)
-    if (this.data.get('ticks') === 6000) this.updateDifficulty(3)
+    if (this.data.get('score') >= 25) this.updateDifficulty(1)
+    if (this.data.get('score') >= 100) this.updateDifficulty(2)
+    if (this.data.get('score') === 250) this.updateDifficulty(3)
 
     this.arrowSpawner.tick()
     this.spikeSpawner.tick()
@@ -156,13 +198,6 @@ export class Game extends Scene {
         coin.pickup()
         player.grabCoin()
       }
-    })
-  }
-
-  gameover = () => {
-    const onUpdate = (_: any, p: number) => p === 1 && this.scene.start('Menu')
-    this.time.delayedCall(250, () => {
-      this.cameras.main.fade(500, 0, 0, 0, true, onUpdate)
     })
   }
 

@@ -25,6 +25,8 @@ export class SpikeSpawner extends BaseSpawner {
   }
 
   spawnNextWave = () => {
+    if (this.sceneRef.data.get('paused') === 1) return
+
     const RND = Phaser.Math.RND
     const type = RND.pick(['box'])
     if (type === 'row') {

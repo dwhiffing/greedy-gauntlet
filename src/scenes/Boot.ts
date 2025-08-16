@@ -29,6 +29,7 @@ export class Boot extends Scene {
   preload() {
     this.load.setPath('assets')
     this.load.bitmapFont('pixel-dan', 'pixel-dan.png', 'pixel-dan.xml')
+    this.load.image('title', 'title.png')
     this.load.spritesheet('sheet', 'sheet.png', {
       frameWidth: 9,
       frameHeight: 9,
@@ -55,8 +56,7 @@ export class Boot extends Scene {
       frameRate: 10,
       repeat: -1,
     })
-    // this.scene.start('Game')
+    this.scene.start('Game')
     // this.sound.play('music', { loop: true, volume: 0.5 })
-    this.scene.start('Menu')
   }
 }

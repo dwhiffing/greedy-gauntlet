@@ -19,7 +19,7 @@ export class Player extends Physics.Arcade.Sprite {
   private lastMoveKey: 'up' | 'down' | 'left' | 'right' | null = null
   public multiIndex = 0
   public coinCombo = 0
-  private hat: GameObjects.Sprite
+  public hat: GameObjects.Sprite
   private isTweening: boolean = false
   private _wasMoving: boolean = false
 
@@ -32,9 +32,10 @@ export class Player extends Physics.Arcade.Sprite {
       .sprite(3 * 8, 3 * 8, 'sheet', 0)
       .setOrigin(0.2, 0.2)
       .setDepth(2)
+      .setAlpha(0)
 
     this.resetTint()
-    this.setSize(5, 6).setDepth(2)
+    this.setSize(5, 6).setDepth(2).setAlpha(0)
     this.setOffsets(false)
 
     if (!scene.input || !scene.input.keyboard) {
@@ -76,11 +77,11 @@ export class Player extends Physics.Arcade.Sprite {
   public async takeDamage() {
     this.setActive(false)
     this.sceneRef.camera.shake(200, 0.02, true)
-    if (!this.hat.visible) {
+    if (this.hat.alpha === 0) {
       this.onDeath()
     } else {
       this.setTintFill(0xffffff)
-      this.hat.setVisible(false)
+      this.hat.setAlpha(0)
 
       await this.sceneRef.sleep(250)
       this.resetTint()
@@ -89,7 +90,7 @@ export class Player extends Physics.Arcade.Sprite {
       this.setActive(true)
 
       await this.sceneRef.sleep(3000)
-      if (this.active) this.hat.setVisible(true)
+      if (this.active) this.hat.setAlpha(1)
     }
   }
 
@@ -106,6 +107,8 @@ export class Player extends Physics.Arcade.Sprite {
   }
 
   public async updateMulti() {
+    if (!this.active) return
+
     this.coinCombo++
     this.sceneRef.data.inc('score', MULTIPLIERS[this.multiIndex])
 
@@ -120,6 +123,8 @@ export class Player extends Physics.Arcade.Sprite {
   }
 
   public async resetMulti() {
+    if (!this.active) return
+
     if (this.multiIndex > 0) {
       this.multiIndex--
       this.coinCombo = COMBO_AMOUNTS[this.multiIndex - 1] ?? 0
@@ -128,10 +133,20 @@ export class Player extends Physics.Arcade.Sprite {
     }
   }
 
+  public onRevive = () => {
+    this.setImmovable(false).setActive(true)
+    this.sceneRef.tweens.add({
+      targets: [this, this.hat],
+      alpha: 1,
+      duration: 500,
+    })
+  }
+
   private onDeath = () => {
     const s = this.sceneRef
     this.setImmovable(true)
-    this.setVisible(false)
+    this.setAlpha(0)
+    this.hat.setAlpha(0)
 
     s.add
       .particles(4, 4, 'sheet', {
@@ -214,7 +229,7 @@ export class Player extends Physics.Arcade.Sprite {
       targets: [this, this.hat],
       x: targetX,
       y: targetY,
-      duration: 150 - this.sceneRef.data.get('difficulty') * 15,
+      duration: this.hat.alpha === 0 ? 220 : 170,
       onComplete: () => {
         this.isTweening = false
         // Immediately check for held keys and move again if needed

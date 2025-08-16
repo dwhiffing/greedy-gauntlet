@@ -19,6 +19,8 @@ export class CoinSpawner extends BaseSpawner {
   }
 
   spawnNextWave = () => {
+    if (this.sceneRef.data.get('paused') === 1) return
+
     const coins = this.sceneRef.coins.getChildren() as Coin[]
     const activeCoins = coins.filter((c) => c.active)
     if (activeCoins.length > 0) return

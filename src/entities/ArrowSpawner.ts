@@ -22,6 +22,8 @@ export class ArrowSpawner extends BaseSpawner {
   }
 
   spawnNextWave = () => {
+    if (this.sceneRef.data.get('paused') === 1) return
+
     const direction = Phaser.Math.RND.integerInRange(0, 3)
     const gapSize = 3
     const delay = 0
