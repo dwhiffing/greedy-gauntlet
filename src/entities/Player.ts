@@ -1,7 +1,8 @@
 import { Physics, Math as PhaserMath, Input, GameObjects } from 'phaser'
 import { Game } from '../scenes/Game'
 
-const COMBO_AMOUNTS = [2, 6, 12, 20, 30, 42]
+const MULTIPLIERS = [1, 2, 3, 5, 10, 20, 50]
+const COMBO_AMOUNTS = [4, 10, 18, 28, 40, 54]
 const COLORS = [
   0xaa00ff, 0x0099ee, 0x00aa44, 0xffcc00, 0xff8800, 0xcc3300, 0xff00aa,
 ]
@@ -16,7 +17,7 @@ export class Player extends Physics.Arcade.Sprite {
   private keyS: Input.Keyboard.Key
   private keyD: Input.Keyboard.Key
   private lastMoveKey: 'up' | 'down' | 'left' | 'right' | null = null
-  public multiIndex = 6
+  public multiIndex = 0
   public coinCombo = 0
   private hat: GameObjects.Sprite
 
@@ -99,22 +100,32 @@ export class Player extends Physics.Arcade.Sprite {
     this.setTint(0xffaa00)
     this.hat.setTint(0xffaa00)
 
-    await this.sleep(150)
     this.updateMulti()
+    await this.sleep(150)
+    this.resetTint()
   }
 
   public async updateMulti() {
     this.coinCombo++
+    this.sceneRef.data.inc('score', MULTIPLIERS[this.multiIndex])
 
-    if (this.coinCombo >= COMBO_AMOUNTS[this.multiIndex])
-      if (this.multiIndex < 6) this.multiIndex++
-    this.resetTint()
+    if (this.coinCombo >= COMBO_AMOUNTS[this.multiIndex]) {
+      if (this.multiIndex < 6) {
+        this.multiIndex++
+        this.sceneRef.text.spawn(`${MULTIPLIERS[this.multiIndex]}X`, 0x00ff00)
+      }
+    } else {
+      this.sceneRef.text.spawn(`${this.sceneRef.data.get('score')}`)
+    }
   }
 
   public async resetMulti() {
-    this.multiIndex--
-    this.coinCombo = COMBO_AMOUNTS[this.multiIndex - 1]
-    this.resetTint()
+    if (this.multiIndex > 0) {
+      this.multiIndex--
+      this.coinCombo = COMBO_AMOUNTS[this.multiIndex - 1] ?? 0
+      this.sceneRef.text.spawn(`${MULTIPLIERS[this.multiIndex]}X`, 0xff0000)
+      this.resetTint()
+    }
   }
 
   private onDeath = () => {

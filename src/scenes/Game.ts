@@ -7,6 +7,7 @@ import { SpikeSpawner } from '../entities/SpikeSpawner'
 import { Spike } from '../entities/Spike'
 import { Coin } from '../entities/Coin'
 import { CoinSpawner } from '../entities/CoinSpawner'
+import { FadingBitmapText } from '../entities/FadingBitmapText'
 
 export class Game extends Scene {
   public camera!: Cameras.Scene2D.Camera
@@ -15,6 +16,7 @@ export class Game extends Scene {
   public arrows!: Physics.Arcade.Group
   public spikes!: Physics.Arcade.Group
   public coins!: Physics.Arcade.Group
+  public text!: FadingBitmapText
   public arrowSpawner!: ArrowSpawner
   public spikeSpawner!: SpikeSpawner
   public coinSpawner!: CoinSpawner
@@ -32,8 +34,11 @@ export class Game extends Scene {
       this.game.sound.setMute(!this.game.sound.mute)
     })
 
+    this.data.set('score', 0)
+
     this.floor = new Floor(this)
     this.player = new Player(this)
+    this.text = new FadingBitmapText(this)
 
     this.arrows = this.physics.add.group({
       classType: Arrow,
@@ -87,6 +92,7 @@ export class Game extends Scene {
   update(_time: number, _delta: number): void {
     this.globalTick++
     this.player.update()
+    this.text.update()
     this.physics.overlap(
       this.player,
       [this.arrows, this.spikes],
