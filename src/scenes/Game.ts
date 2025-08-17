@@ -152,8 +152,11 @@ export class Game extends Scene {
     if (this.data.get('waveTimer') === 0) {
       this.data.set('waveTimer', this.data.get('waveRate'))
       if (this.spawnPool.length === 0) {
-        this.spawnPool = LEVELS[this.data.get('difficulty')].pool
+        this.spawnPool = Phaser.Math.RND.shuffle([
+          ...LEVELS[this.data.get('difficulty')].pool,
+        ])
       }
+
       const spawn = this.spawnPool.shift()!
       if (spawn.type === 'arrow') {
         this.arrowSpawner.spawnNextWave(spawn)
