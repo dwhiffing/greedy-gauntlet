@@ -55,7 +55,7 @@ export class Game extends Scene {
 
     this.titleTextTween = this.tweens.add({
       targets: this.titleText,
-      alpha: { from: 0.8, to: 0.25 },
+      alpha: { from: 1, to: 0.4 },
       duration: 1200,
       yoyo: true,
       repeat: -1,
@@ -103,7 +103,7 @@ export class Game extends Scene {
     this.data.set('score', 0)
     this.playSound('game-start')
 
-    this.titleTextTween?.stop().remove()
+    this.titleTextTween?.pause()
     this.player.onRevive()
     this.tweens.add({
       targets: [this.titleText, this.scoreText, this.title],
@@ -126,7 +126,10 @@ export class Game extends Scene {
       targets: [this.scoreText, this.title, this.titleText],
       alpha: 1,
       duration: 1500,
-      onComplete: () => this.data.set('gameover', 1),
+      onComplete: () => {
+        this.titleTextTween?.restart()
+        this.data.set('gameover', 1)
+      },
     })
   }
 
