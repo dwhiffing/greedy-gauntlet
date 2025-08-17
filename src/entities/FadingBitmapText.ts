@@ -13,7 +13,8 @@ export class FadingBitmapText extends GameObjects.BitmapText {
 
   update() {
     if (!this.active) return
-    this.setPosition(this.sceneRef.player.x + 4, this.sceneRef.player.y - 7)
+    const p = this.sceneRef.player
+    this.setPosition(p.x + 4, p.y < 5 ? p.y + 8 : p.y - 7)
   }
 
   spawn(text: string, color = 0xffffff) {
