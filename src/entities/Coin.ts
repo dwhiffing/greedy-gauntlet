@@ -1,9 +1,10 @@
 import { Physics } from 'phaser'
 import { Game } from '../scenes/Game'
+import { COIN_LIFETIME, COIN_LIFETIME_DECREASE } from '../constants'
 
 export class Coin extends Physics.Arcade.Sprite {
   protected sceneRef: Game
-  public lifetime = 20
+  public lifetime = COIN_LIFETIME
   private fadeTween?: Phaser.Tweens.Tween
   particles: Phaser.GameObjects.Particles.ParticleEmitter
 

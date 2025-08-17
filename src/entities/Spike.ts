@@ -1,6 +1,7 @@
 import { Physics } from 'phaser'
 import { Game } from '../scenes/Game'
 import { TimerBorder } from './TimerBorder'
+import { SPIKE_EXTRA_FRAMES } from '../constants'
 
 export class Spike extends Physics.Arcade.Sprite {
   protected sceneRef: Game
@@ -34,10 +35,7 @@ export class Spike extends Physics.Arcade.Sprite {
           this.setFrame(5)
           this.setAlpha(1)
         }
-        if (
-          this.age ===
-          this.lifetime + (6 - this.sceneRef.data.get('difficulty'))
-        ) {
+        if (this.age === this.lifetime + SPIKE_EXTRA_FRAMES) {
           this._isTangible = false
           this.fadeOut()
         }

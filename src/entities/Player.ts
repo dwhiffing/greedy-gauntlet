@@ -1,14 +1,15 @@
 import { Physics, Math as PhaserMath, Input, GameObjects } from 'phaser'
 import { Game } from '../scenes/Game'
-
-const MULTIPLIERS = [1, 2, 3, 5, 10, 20, 50]
-const COMBO_AMOUNTS = [4, 10, 18, 28, 40, 54]
-const COLORS = [
-  0xaa00ff, 0x0099ee, 0x00aa44, 0xffcc00, 0xff8800, 0xcc3300, 0xff00aa,
-]
-const HAT_COLORS = [
-  0x00aa44, 0xaa00ff, 0xcc3300, 0xff00aa, 0x0099ee, 0xffcc00, 0xff8800,
-]
+import {
+  PLAYER_SLOW_SPEED,
+  PLAYER_BASE_SPEED,
+  PLAYER_REGEN_TIME,
+  PLAYER_IFRAMES,
+  COLORS,
+  COMBO_AMOUNTS,
+  HAT_COLORS,
+  MULTIPLIERS,
+} from '../constants'
 
 export class Player extends Physics.Arcade.Sprite {
   protected sceneRef: Game
@@ -86,13 +87,13 @@ export class Player extends Physics.Arcade.Sprite {
       this.setTintFill(0xffffff)
       this.hat.setAlpha(0)
 
-      await this.sceneRef.sleep(250)
+      await this.sceneRef.sleep(PLAYER_IFRAMES / 2)
       this.resetTint()
 
-      await this.sceneRef.sleep(250)
+      await this.sceneRef.sleep(PLAYER_IFRAMES / 2)
       this.isTangible = true
 
-      await this.sceneRef.sleep(5000)
+      await this.sceneRef.sleep(PLAYER_REGEN_TIME)
       if (this.active) {
         this.sceneRef.playSound('player-regen')
         this.hat.setAlpha(1)
@@ -248,7 +249,7 @@ export class Player extends Physics.Arcade.Sprite {
       targets: [this, this.hat],
       x: targetX,
       y: targetY,
-      duration: this.hat.alpha === 0 ? 220 : 170,
+      duration: this.hat.alpha === 0 ? PLAYER_SLOW_SPEED : PLAYER_BASE_SPEED,
       onComplete: () => {
         this.isTweening = false
         // Immediately check for held keys and move again if needed
