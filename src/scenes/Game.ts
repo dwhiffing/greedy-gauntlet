@@ -8,8 +8,7 @@ import { Spike } from '../entities/Spike'
 import { Coin } from '../entities/Coin'
 import { CoinSpawner } from '../entities/CoinSpawner'
 import { FadingBitmapText } from '../entities/FadingBitmapText'
-
-export type ISpawn = { type: string; variant: string; size?: number }
+import { ISpawn, LEVELS } from '../constants'
 
 export class Game extends Scene {
   public camera!: Cameras.Scene2D.Camera
@@ -134,29 +133,16 @@ export class Game extends Scene {
   updateDifficulty(n: number) {
     this.data.set('difficulty', n)
     const d = this.data.get('difficulty')
-    if (d === 0) {
-      this.data.set('waveRate', 30)
-      this.data.set('attackDelay', 15)
-      this.data.set('arrowSpeed', 5)
-    } else if (d === 1) {
-      this.data.set('waveRate', 20)
-      this.data.set('attackDelay', 15)
-      this.data.set('arrowSpeed', 4)
-    } else if (d === 2) {
-      this.data.set('waveRate', 15)
-      this.data.set('attackDelay', 10)
-      this.data.set('arrowSpeed', 3)
-    } else if (d === 3) {
-      this.data.set('waveRate', 10)
-      this.data.set('attackDelay', 5)
-      this.data.set('arrowSpeed', 2)
-    }
+    this.data.set('waveRate', LEVELS[d].waveRate)
+    this.data.set('arrowSpeed', LEVELS[d].arrowSpeed)
+    this.data.set('attackDelay', LEVELS[d].attackDelay)
   }
 
   tick = () => {
-    if (this.data.get('score') >= 25) this.updateDifficulty(1)
-    if (this.data.get('score') >= 100) this.updateDifficulty(2)
-    if (this.data.get('score') === 250) this.updateDifficulty(3)
+    for (let i = 1; i < LEVELS.length; i++) {
+      if (this.data.get('score') >= LEVELS[i].milestone)
+        this.updateDifficulty(i)
+    }
 
     this.arrowSpawner.tick()
     this.spikeSpawner.tick()
@@ -165,57 +151,31 @@ export class Game extends Scene {
 
     if (this.data.get('waveTimer') === 0) {
       this.data.set('waveTimer', this.data.get('waveRate'))
-
-      this.handleSpawn()
+      if (this.spawnPool.length === 0) {
+        this.spawnPool = LEVELS[this.data.get('difficulty')].pool
+      }
+      const spawn = this.spawnPool.shift()!
+      if (spawn.type === 'arrow') {
+        this.arrowSpawner.spawnNextWave(spawn)
+      } else if (spawn.type === 'spike') {
+        this.spikeSpawner.spawnNextWave(spawn)
+      }
     }
 
     this.data.inc('waveTimer', -1)
   }
 
-  getSpawnPool = () => {
-    const d = this.data.get('difficulty')
-
-    if (d === 0) {
-      return [{ type: 'arrow', variant: 'volley', size: 4 }]
-    } else if (d === 1) {
-      return [
-        { type: 'arrow', variant: 'volley', size: 4 },
-        { type: 'spike', variant: 'box', size: 4 },
-      ]
-    } else if (d === 2) {
-      return [
-        { type: 'arrow', variant: 'volley', size: 4 },
-        { type: 'spike', variant: 'row' },
-      ]
-    } else {
-      return [
-        { type: 'arrow', variant: 'volley', size: 4 },
-        { type: 'spike', variant: 'row' },
-      ]
-    }
-  }
-
-  handleSpawn = () => {
-    if (this.spawnPool.length === 0) {
-      this.spawnPool = this.getSpawnPool()
-    }
-    const spawn = this.spawnPool.shift()!
-    if (spawn.type === 'arrow') {
-      this.arrowSpawner.spawnNextWave(spawn)
-    } else if (spawn.type === 'spike') {
-      this.spikeSpawner.spawnNextWave(spawn)
-    }
-  }
-
   arrowTick = () => {
+    if (this.data.get('arrowTick') <= 0) {
+      this.data.set('arrowTick', this.data.get('arrowSpeed'))
+      this.arrows.children.each((arrow: Phaser.GameObjects.GameObject) => {
+        const a = arrow as Arrow
+        if (a.active) a.move()
+        return null
+      })
+    }
+
     this.data.inc('arrowTick', -1)
-    if (this.data.get('arrowTick') > 0) return
-    this.data.set('arrowTick', this.data.get('arrowSpeed'))
-    this.arrows.children.each((arrow: Phaser.GameObjects.GameObject) => {
-      const a = arrow as Arrow
-      if (a.active) a.move()
-      return null
-    })
   }
 
   update(_time: number, _delta: number): void {

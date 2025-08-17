@@ -1,4 +1,5 @@
-import { Game, ISpawn } from '../scenes/Game'
+import { ISpawn } from '../constants'
+import { Game } from '../scenes/Game'
 
 export type SpawnParams = { delay?: number; baseDelay?: number }
 export class BaseSpawner {
