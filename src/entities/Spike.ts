@@ -69,6 +69,7 @@ export class Spike extends Physics.Arcade.Sprite {
       onComplete: () => {
         this.setVisible(false)
         this.setActive(false)
+        this.timerBorder.setVisible(false).setActive(false)
       },
     })
 }

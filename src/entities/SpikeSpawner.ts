@@ -13,12 +13,12 @@ export class SpikeSpawner extends BaseSpawner {
 
     const x = index % 8
     const y = Math.floor(index / 8)
-    const activeSpikes = this.sceneRef.spikes.getChildren() as Spike[]
-    for (const s of activeSpikes) {
-      if (s.active && Math.round(s.x / 8) === x && Math.round(s.y / 8) === y) {
-        return
-      }
-    }
+    // const activeSpikes = this.sceneRef.spikes.getChildren() as Spike[]
+    // for (const s of activeSpikes) {
+    //   if (s.active && Math.round(s.x / 8) === x && Math.round(s.y / 8) === y) {
+    //     return
+    //   }
+    // }
 
     const spike = this.sceneRef.spikes.get() as Spike | null
     if (!spike) return

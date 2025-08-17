@@ -50,6 +50,7 @@ export class TimerBorder extends Phaser.GameObjects.Graphics {
     this.y = y * 8
     this.alpha = 0.5
     this.durationMs = durationMs
+    this.setVisible(true).setActive(true)
     this.redraw()
   }
 }
