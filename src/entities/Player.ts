@@ -65,6 +65,38 @@ export class Player extends Physics.Arcade.Sprite {
           break
       }
     })
+
+    // touch controls
+    let touchStartX: number | null = null
+    let touchStartY: number | null = null
+    scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (!(pointer.event instanceof TouchEvent)) return
+
+      this.lastMoveKey = null
+      touchStartX = pointer.x
+      touchStartY = pointer.y
+    })
+    scene.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+      if (!(pointer.event instanceof TouchEvent)) return
+
+      const dx = pointer.x - touchStartX!
+      const dy = pointer.y - touchStartY!
+
+      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+        touchStartX = pointer.x
+        touchStartY = pointer.y
+        if (Math.abs(dx) > Math.abs(dy)) {
+          this.lastMoveKey = dx > 0 ? 'right' : 'left'
+        } else {
+          this.lastMoveKey = dy > 0 ? 'down' : 'up'
+        }
+      }
+    })
+    scene.input.on('pointerup', () => {
+      this.lastMoveKey = null
+      touchStartX = null
+      touchStartY = null
+    })
   }
 
   public resetTint() {
@@ -207,7 +239,10 @@ export class Player extends Physics.Arcade.Sprite {
     // Try lastMoveKey first
     if (this.lastMoveKey) {
       for (const { key, dir, vec } of keyMap) {
-        if (dir === this.lastMoveKey && key.isDown) {
+        if (
+          dir === this.lastMoveKey &&
+          (key.isDown || this.sceneRef.input.activePointer.isDown)
+        ) {
           m.x = vec[0]
           m.y = vec[1]
           found = true

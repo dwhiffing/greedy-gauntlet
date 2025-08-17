@@ -67,12 +67,16 @@ export class Game extends Scene {
       this.game.sound.setMute(muteStatus === 'true')
     }
 
-    this.input.keyboard!.on('keydown', this.startGame)
+    this.input.keyboard!.on('keydown', (e: any) => {
+      if (!e.key.includes('Arrow')) return
+      this.startGame()
+    })
+    this.input.on('pointerdown', this.startGame)
     // this.startGame({ key: 'Arrow' })
   }
 
-  startGame = (e: { key: string }) => {
-    if (!e.key.includes('Arrow') || this.data.get('gameover') === 0) return
+  startGame = () => {
+    if (this.data.get('gameover') === 0) return
 
     this.data.set('gameover', 0)
     this.data.set('score', 0)
