@@ -15,7 +15,7 @@ export class Spike extends Physics.Arcade.Sprite {
     scene.add.existing(this)
     scene.physics.add.existing(this)
 
-    this.setOrigin(0, 0).setSize(3, 3).setOffset(3, 2)
+    this.setOrigin(0, 0).setSize(3, 3).setOffset(3, 2).setDepth(1)
     this.timerBorder = new TimerBorder(scene)
 
     this.sceneRef.time.addEvent({

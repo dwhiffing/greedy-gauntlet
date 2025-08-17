@@ -9,6 +9,7 @@ export class FadingBitmapText extends GameObjects.BitmapText {
     scene.add.existing(this)
     this.setOrigin(0.5, 0)
     this.sceneRef = scene
+    this.setDepth(4)
   }
 
   update() {

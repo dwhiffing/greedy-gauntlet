@@ -11,6 +11,7 @@ export class Coin extends Physics.Arcade.Sprite {
     super(scene, 3 * 8, 3 * 8, 'sheet', 3)
     this.sceneRef = scene
     scene.add.existing(this)
+    this.setDepth(1)
 
     this.particles = scene.add
       .particles(4, 4, 'sheet', {
@@ -23,6 +24,8 @@ export class Coin extends Physics.Arcade.Sprite {
         angle: { start: 0, end: 360, steps: 6 },
       })
       .stop()
+      .setDepth(1)
+
     scene.physics.add.existing(this)
 
     this.setOrigin(0).setSize(3, 3).setOffset(3, 2).setTint(0xffaa00)

@@ -32,7 +32,7 @@ export class Player extends Physics.Arcade.Sprite {
     this.hat = scene.add
       .sprite(3 * 8, 3 * 8, 'sheet', 0)
       .setOrigin(0.2, 0.2)
-      .setDepth(2)
+      .setDepth(3)
       .setAlpha(0)
 
     this.resetTint()
@@ -110,7 +110,6 @@ export class Player extends Physics.Arcade.Sprite {
     this.updateMulti()
     this.sceneRef.playSound('grab-coin')
     await this.sceneRef.sleep(150)
-    this.resetTint()
   }
 
   public async updateMulti() {
@@ -128,6 +127,7 @@ export class Player extends Physics.Arcade.Sprite {
     } else {
       this.sceneRef.text.spawn(`${this.sceneRef.data.get('score')}`)
     }
+    this.resetTint()
   }
 
   public async resetMulti() {
@@ -145,6 +145,12 @@ export class Player extends Physics.Arcade.Sprite {
   public onRevive = () => {
     this.setImmovable(false).setActive(true)
     this.isTangible = true
+
+    this.multiIndex = 0
+    this.coinCombo = 0
+    this.isTweening = false
+    this._wasMoving = false
+    this.resetTint()
     this.sceneRef.tweens.add({
       targets: [this, this.hat],
       alpha: 1,
