@@ -188,7 +188,7 @@ export class Game extends Scene {
   }
 
   playSound = (key: string, extra?: Phaser.Types.Sound.SoundConfig) => {
-    if (document.hasFocus()) this.sound.play(key, extra)
+    if (document.hasFocus() && !this.sound.mute) this.sound.play(key, extra)
   }
 
   async sleep(ms: number) {

@@ -51,13 +51,13 @@ export const CROSS_ARROWS_MEDIUM: ISpawn[] = [
   {
     attacks: [
       { ...CROSS_ARROW_BASE, direction: 0, index: 0 },
-      { ...CROSS_ARROW_BASE, direction: 2, index: 1 },
+      { ...CROSS_ARROW_BASE, baseDelay: 7, direction: 2, index: 1 },
     ],
   },
   {
     attacks: [
       { ...CROSS_ARROW_BASE, direction: 1, index: 0 },
-      { ...CROSS_ARROW_BASE, direction: 3, index: 0 },
+      { ...CROSS_ARROW_BASE, baseDelay: 7, direction: 3, index: 0 },
     ],
   },
 ]
@@ -65,13 +65,13 @@ export const CROSS_ARROWS_HARD: ISpawn[] = [
   {
     attacks: [
       { ...CROSS_ARROW_BASE, delay: 1, direction: 0, index: 0 },
-      { ...CROSS_ARROW_BASE, delay: 1, direction: 2, index: 1 },
+      { ...CROSS_ARROW_BASE, baseDelay: 4, delay: 1, direction: 2, index: 1 },
     ],
   },
   {
     attacks: [
       { ...CROSS_ARROW_BASE, delay: 1, direction: 1, index: 0 },
-      { ...CROSS_ARROW_BASE, delay: 1, direction: 3, index: 0 },
+      { ...CROSS_ARROW_BASE, baseDelay: 4, delay: 1, direction: 3, index: 0 },
     ],
   },
 ]
@@ -102,16 +102,16 @@ export const EASY_SPIKE_ROWS: ISpawn[] = [
 export const MEDIUM_SPIKE_ROWS: ISpawn[] = [
   {
     attacks: [
-      { ...SPIKE_ROW_BASE, repeat: 4, direction: 0 },
-      { ...SPIKE_ROW_BASE, repeat: 4, direction: 1 },
+      { ...SPIKE_ROW_BASE, repeat: 2, direction: 0 },
+      { ...SPIKE_ROW_BASE, repeat: 2, direction: 1 },
     ],
   },
 ]
 export const HARD_SPIKE_ROWS: ISpawn[] = [
   {
     attacks: [
-      { ...SPIKE_ROW_BASE, repeat: 5, direction: 0 },
-      { ...SPIKE_ROW_BASE, repeat: 5, direction: 1 },
+      { ...SPIKE_ROW_BASE, direction: 0 },
+      { ...SPIKE_ROW_BASE, direction: 1 },
     ],
   },
 ]
@@ -135,13 +135,6 @@ export const HARD_SPIKE_CHECKER: ISpawn[] = [
   { attacks: [{ ...SPIKE_CHECKER_BASE, delay: 3, gap: 0 }] },
 ]
 
-export const EASY_SPIKE_ARC: ISpawn = {
+export const SPIKE_ARC: ISpawn = {
   attacks: [{ type: 'spike', variant: 'arc', direction: 1, repeat: 1 }],
-}
-
-export const MEDIUM_SPIKE_ARC: ISpawn = {
-  attacks: [{ type: 'spike', variant: 'arc', direction: 1, size: 2 }],
-}
-export const HARD_SPIKE_ARC: ISpawn = {
-  attacks: [{ type: 'spike', variant: 'arc', direction: 1, size: 3 }],
 }

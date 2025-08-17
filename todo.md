@@ -2,13 +2,12 @@
 
 # tasks
 
-- as difficulty increases, have more complex attack patterns
+- add more screenshots
 
-- music
-- particles+juice
+- music?
 
+- mobile controls?
+
+- add better description?
 - better game start sound?
-- better coin pickup sound?
-- better multiplier up sound?
-- only show score every x points?
 - online high score board?

@@ -63,13 +63,13 @@ export class Spike extends Physics.Arcade.Sprite {
   public getIsTangible = () => this._isTangible
 
   private fadeOut = () => {
-    this.setActive(false)
     this.tween = this.sceneRef.tweens.add({
       targets: this,
       alpha: 0,
       delay: 0,
       duration: 300,
       onComplete: () => {
+        this.setActive(false)
         this.setVisible(false)
         this.timerBorder.setVisible(false).setActive(false)
       },

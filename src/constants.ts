@@ -17,6 +17,7 @@ import {
   MEDIUM_SPIKE_BOX,
   MEDIUM_SPIKE_CHECKER,
   MEDIUM_SPIKE_ROWS,
+  SPIKE_ARC,
 } from './attacks'
 
 export type IAttack = {
@@ -65,18 +66,28 @@ export const SPIKE_EXTRA_FRAMES = 1
 
 export const PLAYER_IFRAMES = 500
 export const PLAYER_REGEN_TIME = 5000
-export const PLAYER_BASE_SPEED = 170
+export const PLAYER_BASE_SPEED = 150
 export const PLAYER_SLOW_SPEED = 220
 
 const JUST_VOLLEYS = [EASY_ARROW_VOLLEY]
-const EASY_BASIC = [EASY_ARROW_SPREAD, MEDIUM_ARROW_VOLLEY, EASY_SPIKE_BOX]
+const EASY_BASIC = [
+  EASY_ARROW_SPREAD,
+  MEDIUM_ARROW_VOLLEY,
+  EASY_SPIKE_BOX,
+].flatMap((l) => [l, l])
 
 const MEDIUM_BASIC = [
   MEDIUM_ARROW_SPREAD,
   MEDIUM_ARROW_VOLLEY,
   MEDIUM_SPIKE_BOX,
-]
-const HARD_BASIC = [HARD_ARROW_SPREAD, HARD_ARROW_VOLLEY, HARD_SPIKE_BOX]
+].flatMap((l) => [l, l])
+
+const HARD_BASIC = [
+  HARD_ARROW_SPREAD,
+  HARD_ARROW_VOLLEY,
+  HARD_SPIKE_BOX,
+].flatMap((l) => [l, l])
+
 const EASY_ADV = [
   ...CROSS_ARROWS_EASY,
   ...EASY_SPIKE_ROWS,
@@ -91,6 +102,7 @@ const HARD_ADV = [
   ...CROSS_ARROWS_HARD,
   ...HARD_SPIKE_ROWS,
   ...HARD_SPIKE_CHECKER,
+  SPIKE_ARC,
 ]
 
 const base = {
@@ -137,18 +149,32 @@ export const LEVELS: ILevel[] = [
     milestone: 500,
     pool: [...HARD_BASIC, ...MEDIUM_ADV],
     ...base,
+    waveRate: 2500 / TICK_DURATION,
+    attackDelay: 2000 / TICK_DURATION,
     arrowSpeed: 4,
   },
   {
     milestone: 750,
     pool: [...HARD_BASIC, ...MEDIUM_ADV],
     ...base,
+    waveRate: 2500 / TICK_DURATION,
+    attackDelay: 2000 / TICK_DURATION,
     arrowSpeed: 3,
   },
   {
     milestone: 1000,
     pool: [...HARD_BASIC, ...HARD_ADV],
     ...base,
+    waveRate: 2500 / TICK_DURATION,
+    attackDelay: 2000 / TICK_DURATION,
+    arrowSpeed: 3,
+  },
+  {
+    milestone: 1500,
+    pool: [...HARD_BASIC, ...HARD_ADV],
+    ...base,
+    waveRate: 2200 / TICK_DURATION,
+    attackDelay: 1700 / TICK_DURATION,
     arrowSpeed: 3,
   },
 ]
