@@ -1,4 +1,5 @@
 import { Scene } from 'phaser'
+import { ANIMATIONS } from '../constants'
 
 export class Boot extends Scene {
   constructor() {
@@ -6,23 +7,9 @@ export class Boot extends Scene {
   }
 
   init() {
-    this.add
-      .rectangle(
-        this.cameras.main.width / 2,
-        this.cameras.main.height / 2,
-        468,
-        32,
-      )
-      .setStrokeStyle(1, 0xffffff)
-    const bar = this.add.rectangle(
-      this.cameras.main.width / 2 - 230,
-      this.cameras.main.height / 2,
-      4,
-      28,
-      0xffffff,
-    )
+    const bar = this.add.rectangle(0, 0, 0, 64, 0xffffff).setOrigin(0, 0)
     this.load.on('progress', (progress: number) => {
-      bar.width = 4 + 460 * progress
+      bar.width = 64 * progress
     })
   }
 
@@ -38,8 +25,8 @@ export class Boot extends Scene {
       frameWidth: 8,
       frameHeight: 8,
     })
-    this.load.setPath('assets/audio')
 
+    this.load.setPath('assets/audio')
     this.load.audio('player-hit', 'player-hit.mp3')
     this.load.audio('player-regen', 'player-regen.mp3')
     this.load.audio('gameover', 'game-over.mp3')
@@ -54,21 +41,7 @@ export class Boot extends Scene {
   }
 
   create() {
-    this.anims.create({
-      key: 'player-walk',
-      frames: [
-        { key: 'sheet', frame: 6 },
-        { key: 'sheet', frame: 7 },
-      ],
-      frameRate: 8,
-      repeat: -1,
-    })
-    this.anims.create({
-      key: 'player-idle',
-      frames: [{ key: 'sheet', frame: 1 }],
-      frameRate: 10,
-      repeat: -1,
-    })
+    ANIMATIONS.forEach((a) => this.anims.create(a))
     this.scene.start('Game')
     // this.sound.play('music', { loop: true, volume: 0.5 })
   }

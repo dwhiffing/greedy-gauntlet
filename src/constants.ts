@@ -65,3 +65,16 @@ export const COLORS = [
 export const HAT_COLORS = [
   0x00aa44, 0xaa00ff, 0xcc3300, 0xff00aa, 0x0099ee, 0xffcc00, 0xff8800,
 ]
+const key = 'sheet'
+export const ANIMATIONS: Phaser.Types.Animations.Animation[] = [
+  {
+    key: 'player-walk',
+    frameRate: 6,
+    repeat: -1,
+    frames: [
+      { key, frame: 6 },
+      { key, frame: 7 },
+    ],
+  },
+  { key: 'player-idle', frames: [{ key, frame: 1 }] },
+]
