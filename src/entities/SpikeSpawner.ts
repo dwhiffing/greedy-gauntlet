@@ -1,4 +1,4 @@
-import { Game } from '../scenes/Game'
+import { Game, ISpawn } from '../scenes/Game'
 import { BaseSpawner, SpawnParams } from './BaseSpawner'
 import { Spike } from './Spike'
 
@@ -24,14 +24,14 @@ export class SpikeSpawner extends BaseSpawner {
     spike.spawn(x, y, delay)
   }
 
-  spawnNextWave = () => {
+  spawnNextWave = (spawn: ISpawn) => {
     if (this.sceneRef.data.get('paused') === 1) return
 
     this.sceneRef.playSound('spike-spawn')
     this.sceneRef.data.set('play-arrow-launch', true)
 
     const RND = Phaser.Math.RND
-    const type = RND.pick(['box'])
+    const type = spawn.variant
     if (type === 'row') {
       this.spawnWave(RND.between(0, 7), 1, 0, 8, 'row')
     } else if (type === 'wave') {
@@ -39,8 +39,8 @@ export class SpikeSpawner extends BaseSpawner {
     } else if (type === 'column') {
       this.spawnWave(RND.between(0, 7), 1, 0, 8, 'column')
     } else if (type === 'box') {
-      const width = 3
-      const height = 3
+      const width = spawn.size ?? 3
+      const height = spawn.size ?? 3
       const x = RND.between(0, 8 - width)
       const y = RND.between(0, 8 - height)
       this.spawnWave(x, width, y, height, 'column')
@@ -66,7 +66,7 @@ export class SpikeSpawner extends BaseSpawner {
           indexes.push(j * 8 + i)
         }
       }
-      this.spawnMany(indexes, { ...params, delay: 1, baseDelay: k++ })
+      this.spawnMany(indexes, { ...params, delay: 0, baseDelay: k++ })
     }
   }
 }

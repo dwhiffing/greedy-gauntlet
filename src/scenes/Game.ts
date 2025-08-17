@@ -9,6 +9,8 @@ import { Coin } from '../entities/Coin'
 import { CoinSpawner } from '../entities/CoinSpawner'
 import { FadingBitmapText } from '../entities/FadingBitmapText'
 
+export type ISpawn = { type: string; variant: string; size?: number }
+
 export class Game extends Scene {
   public camera!: Cameras.Scene2D.Camera
   public floor!: Floor
@@ -23,6 +25,7 @@ export class Game extends Scene {
   public titleText!: GameObjects.BitmapText
   public scoreText!: GameObjects.BitmapText
   public title!: GameObjects.Image
+  private spawnPool: ISpawn[]
 
   constructor() {
     super('Game')
@@ -42,6 +45,7 @@ export class Game extends Scene {
 
     this.title = this.add.image(32, 28, 'title').setDepth(10)
 
+    this.spawnPool = []
     this.titleText = this.add
       .bitmapText(32, 64, 'pixel-dan', 'PRESS ARROW KEY')
       .setTintFill(0xffffff)
@@ -120,8 +124,8 @@ export class Game extends Scene {
     this.data.set('difficulty', n)
     const d = this.data.get('difficulty')
     if (d === 0) {
-      this.data.set('waveRate', 35)
-      this.data.set('attackDelay', 20)
+      this.data.set('waveRate', 30)
+      this.data.set('attackDelay', 15)
       this.data.set('arrowSpeed', 5)
     } else if (d === 1) {
       this.data.set('waveRate', 20)
@@ -150,22 +154,46 @@ export class Game extends Scene {
 
     if (this.data.get('waveTimer') === 0) {
       this.data.set('waveTimer', this.data.get('waveRate'))
-      const d = this.data.get('difficulty')
-      if (d === 0) {
-        this.arrowSpawner.spawnNextWave()
-      } else if (d === 3) {
-        this.arrowSpawner.spawnNextWave()
-        this.spikeSpawner.spawnNextWave()
-      } else {
-        if (Phaser.Math.RND.between(0, 1) === 0) {
-          this.arrowSpawner.spawnNextWave()
-        } else {
-          this.spikeSpawner.spawnNextWave()
-        }
-      }
+
+      this.handleSpawn()
     }
 
     this.data.inc('waveTimer', -1)
+  }
+
+  getSpawnPool = () => {
+    const d = this.data.get('difficulty')
+
+    if (d === 0) {
+      return [{ type: 'arrow', variant: 'volley', size: 4 }]
+    } else if (d === 1) {
+      return [
+        { type: 'arrow', variant: 'volley', size: 4 },
+        { type: 'spike', variant: 'box', size: 4 },
+      ]
+    } else if (d === 2) {
+      return [
+        { type: 'arrow', variant: 'volley', size: 4 },
+        { type: 'spike', variant: 'row' },
+      ]
+    } else {
+      return [
+        { type: 'arrow', variant: 'volley', size: 4 },
+        { type: 'spike', variant: 'row' },
+      ]
+    }
+  }
+
+  handleSpawn = () => {
+    if (this.spawnPool.length === 0) {
+      this.spawnPool = this.getSpawnPool()
+    }
+    const spawn = this.spawnPool.shift()!
+    if (spawn.type === 'arrow') {
+      this.arrowSpawner.spawnNextWave(spawn)
+    } else if (spawn.type === 'spike') {
+      this.spikeSpawner.spawnNextWave(spawn)
+    }
   }
 
   arrowTick = () => {

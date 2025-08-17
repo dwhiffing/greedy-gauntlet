@@ -1,4 +1,4 @@
-import { Game } from '../scenes/Game'
+import { Game, ISpawn } from '../scenes/Game'
 
 export type SpawnParams = { delay?: number; baseDelay?: number }
 export class BaseSpawner {
@@ -11,7 +11,7 @@ export class BaseSpawner {
   }
 
   spawn = (_index: number, _delay: number): void => {}
-  spawnNextWave = () => {}
+  spawnNextWave = (_variant: ISpawn) => {}
 
   spawnMany = (indexes: number[], params?: SpawnParams) => {
     indexes.forEach((i, idx) => {

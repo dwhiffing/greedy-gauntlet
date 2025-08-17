@@ -1,4 +1,4 @@
-import { Game } from '../scenes/Game'
+import { Game, ISpawn } from '../scenes/Game'
 import { Arrow } from './Arrow'
 import { BaseSpawner } from './BaseSpawner'
 
@@ -9,6 +9,7 @@ export class ArrowSpawner extends BaseSpawner {
   constructor(sceneRef: Game) {
     super(sceneRef)
   }
+
   spawn = (index: number, delay: number): void => {
     if (index === -1) return
 
@@ -21,29 +22,35 @@ export class ArrowSpawner extends BaseSpawner {
     arrow.spawn(x, y, direction, delay)
   }
 
-  spawnNextWave = () => {
+  spawnNextWave = (spawn: ISpawn) => {
     if (this.sceneRef.data.get('paused') === 1) return
 
     this.sceneRef.playSound('arrow-spawn')
     this.sceneRef.data.set('play-arrow-launch', true)
 
     const direction = Phaser.Math.RND.integerInRange(0, 3)
-    const gapSize = 3
-    const delay = 0
     const indexes = this.addToEach(
-      this.getArrayWithRandomGap(gapSize),
+      this.getArrayWithRandomGap(spawn.size, spawn.variant === 'volley'),
       direction * 8,
     )
-    this.spawnMany(indexes, { delay })
+    this.spawnMany(indexes, { delay: 0 })
   }
 
-  getArrayWithRandomGap(gapSize: number): number[] {
+  getArrayWithRandomGap(gapSize = 3, inverse = false): number[] {
     const arr = Array.from({ length: 8 }, (_, i) => i)
     if (gapSize <= 0 || gapSize >= arr.length) return arr
     const maxStart = arr.length - gapSize
     const start = Math.floor(Math.random() * (maxStart + 1))
-    for (let i = start; i < start + gapSize; i++) {
-      arr[i] = -1
+    if (!inverse) {
+      for (let i = start; i < start + gapSize; i++) {
+        arr[i] = -1
+      }
+    } else {
+      for (let i = 0; i < arr.length; i++) {
+        if (i < start || i >= start + gapSize) {
+          arr[i] = -1
+        }
+      }
     }
     return arr
   }

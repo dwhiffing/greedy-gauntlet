@@ -10,6 +10,7 @@ export class TimerBorder extends Phaser.GameObjects.Graphics {
     super(scene)
     scene.add.existing(this)
     this.reset(0, 0, 1000)
+    this.setDepth(4)
     this.redraw()
   }
 
