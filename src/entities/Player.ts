@@ -153,7 +153,7 @@ export class Player extends Physics.Arcade.Sprite {
 
     if (this.coinCombo >= COMBO_AMOUNTS[this.multiIndex]) {
       if (this.multiIndex < 6) {
-        this.sceneRef.playSound('multi-up', { volume: 0.6 })
+        this.sceneRef.playSound('multi-up', { volume: 0.8 })
         this.multiIndex++
         this.sceneRef.text.spawn(`${MULTIPLIERS[this.multiIndex]}X`, 0x00ff00)
       }

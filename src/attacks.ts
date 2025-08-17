@@ -13,7 +13,7 @@ export const HARD_ARROW_VOLLEY: ISpawn = {
 }
 
 export const EASY_ARROW_SPREAD: ISpawn = {
-  attacks: [{ type: 'arrow', delay: 1, size: 3 }],
+  attacks: [{ type: 'arrow', delay: 2, size: 3 }],
 }
 
 export const MEDIUM_ARROW_SPREAD: ISpawn = {
