@@ -28,8 +28,11 @@ export class Spike extends Physics.Arcade.Sprite {
 
         if (this.age === this.lifetime) {
           if (this.sceneRef.data.get('play-arrow-launch')) {
-            this.sceneRef.playSound('spike-launch')
+            this.sceneRef.playSound('arrow-launch')
             this.sceneRef.data.set('play-arrow-launch', false)
+            this.sceneRef.time.delayedCall(100, () =>
+              this.sceneRef.data.set('play-arrow-launch', true),
+            )
           }
 
           this._isTangible = true

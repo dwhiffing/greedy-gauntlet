@@ -30,8 +30,6 @@ export class Boot extends Scene {
     this.load.audio('player-hit', 'player-hit.mp3')
     this.load.audio('player-regen', 'player-regen.mp3')
     this.load.audio('gameover', 'game-over.mp3')
-    this.load.audio('spike-spawn', 'attack-spawn.mp3')
-    this.load.audio('spike-launch', 'attack-launch.mp3')
     this.load.audio('arrow-spawn', 'attack-spawn.mp3')
     this.load.audio('arrow-launch', 'attack-launch.mp3')
     this.load.audio('grab-coin', 'coin-hit.mp3')

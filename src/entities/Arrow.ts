@@ -50,6 +50,9 @@ export class Arrow extends Physics.Arcade.Sprite {
         if (this.sceneRef.data.get('play-arrow-launch')) {
           this.sceneRef.playSound('arrow-launch')
           this.sceneRef.data.set('play-arrow-launch', false)
+          this.sceneRef.time.delayedCall(100, () =>
+            this.sceneRef.data.set('play-arrow-launch', true),
+          )
         }
         this.isMoving = true
       },

@@ -82,6 +82,7 @@ export class Game extends Scene {
 
     this.data.set('gameover', 0)
     this.data.set('score', 0)
+    this.data.set('play-arrow-launch', true)
     this.music.play()
 
     this.ui.titleTextTween?.pause()
