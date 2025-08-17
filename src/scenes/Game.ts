@@ -26,6 +26,7 @@ export class Game extends Scene {
   public scoreText!: GameObjects.BitmapText
   public title!: GameObjects.Image
   private spawnPool: ISpawn[]
+  public titleTextTween?: Phaser.Tweens.Tween
 
   constructor() {
     super('Game')
@@ -52,6 +53,15 @@ export class Game extends Scene {
       .setFontSize(5)
       .setOrigin(0.5, 1)
       .setDepth(10)
+
+    this.titleTextTween = this.tweens.add({
+      targets: this.titleText,
+      alpha: { from: 0.8, to: 0.25 },
+      duration: 1200,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    })
 
     this.scoreText = this.add
       .bitmapText(32, 42, 'pixel-dan', '')
@@ -94,6 +104,7 @@ export class Game extends Scene {
     this.data.set('score', 0)
     this.playSound('game-start')
 
+    this.titleTextTween?.stop().remove()
     this.player.onRevive()
     this.tweens.add({
       targets: [this.titleText, this.scoreText, this.title],
