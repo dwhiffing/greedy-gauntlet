@@ -35,14 +35,13 @@ export class Boot extends Scene {
     this.load.audio('arrow-spawn', 'attack-spawn.mp3')
     this.load.audio('arrow-launch', 'attack-launch.mp3')
     this.load.audio('grab-coin', 'coin-hit.mp3')
-    this.load.audio('game-start', 'coin-hit.mp3')
     this.load.audio('multi-down', 'multi-down.mp3')
     this.load.audio('multi-up', 'multi-up.mp3')
+    this.load.audio('music', 'music-crispy.mp3')
   }
 
   create() {
     ANIMATIONS.forEach((a) => this.anims.create(a))
     this.scene.start('Game')
-    // this.sound.play('music', { loop: true, volume: 0.5 })
   }
 }

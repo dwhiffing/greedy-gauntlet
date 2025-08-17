@@ -28,7 +28,7 @@ export class SpikeSpawner extends BaseSpawner {
   spawnNextWave = (attack: IAttack) => {
     if (this.sceneRef.data.get('paused') === 1) return
 
-    this.sceneRef.playSound('spike-spawn')
+    this.sceneRef.playSound('spike-spawn', { volume: 0.85 })
     this.sceneRef.data.set('play-arrow-launch', true)
 
     const type = attack.variant

@@ -23,6 +23,7 @@ export class Game extends Scene {
   public coinSpawner!: CoinSpawner
   private spawnPool: ISpawn[]
   public ui!: UI
+  public music: Phaser.Sound.BaseSound
 
   constructor() {
     super('Game')
@@ -30,6 +31,7 @@ export class Game extends Scene {
 
   create(): void {
     this.cameras.main.fadeFrom(500, 0, 0, 0)
+    this.music = this.sound.add('music', { loop: true, volume: 0.3 })
 
     this.floor = new Floor(this)
     this.player = new Player(this)
@@ -80,7 +82,7 @@ export class Game extends Scene {
 
     this.data.set('gameover', 0)
     this.data.set('score', 0)
-    this.playSound('game-start')
+    this.music.play()
 
     this.ui.titleTextTween?.pause()
     this.player.onRevive()
@@ -99,6 +101,7 @@ export class Game extends Scene {
 
   gameOver = () => {
     this.data.set('paused', 1)
+    this.music.pause()
 
     this.ui.title.y = 14
     this.ui.scoreText.setText(`SCORE\n${this.data.get('score') ?? 0}`)

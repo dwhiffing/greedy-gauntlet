@@ -141,7 +141,7 @@ export class Player extends Physics.Arcade.Sprite {
 
   public async grabCoin() {
     this.updateMulti()
-    this.sceneRef.playSound('grab-coin')
+    this.sceneRef.playSound('grab-coin', { volume: 4 })
     await this.sceneRef.sleep(150)
   }
 
@@ -153,7 +153,7 @@ export class Player extends Physics.Arcade.Sprite {
 
     if (this.coinCombo >= COMBO_AMOUNTS[this.multiIndex]) {
       if (this.multiIndex < 6) {
-        this.sceneRef.playSound('multi-up')
+        this.sceneRef.playSound('multi-up', { volume: 0.6 })
         this.multiIndex++
         this.sceneRef.text.spawn(`${MULTIPLIERS[this.multiIndex]}X`, 0x00ff00)
       }

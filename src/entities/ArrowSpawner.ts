@@ -26,7 +26,7 @@ export class ArrowSpawner extends BaseSpawner {
   spawnNextWave = (attack: IAttack) => {
     if (this.sceneRef.data.get('paused') === 1) return
 
-    this.sceneRef.playSound('arrow-spawn')
+    this.sceneRef.playSound('arrow-spawn', { volume: 0.85 })
     this.sceneRef.data.set('play-arrow-launch', true)
 
     const direction = attack.direction ?? Phaser.Math.RND.integerInRange(0, 3)
