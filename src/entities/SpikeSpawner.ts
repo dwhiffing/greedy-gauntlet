@@ -1,4 +1,4 @@
-import { ISpawn } from '../constants'
+import { IAttack } from '../constants'
 import { Game } from '../scenes/Game'
 import { BaseSpawner, SpawnParams } from './BaseSpawner'
 import { Spike } from './Spike'
@@ -25,54 +25,66 @@ export class SpikeSpawner extends BaseSpawner {
     spike.spawn(x, y, delay)
   }
 
-  spawnNextWave = (spawn: ISpawn) => {
+  spawnNextWave = (attack: IAttack) => {
     if (this.sceneRef.data.get('paused') === 1) return
 
     this.sceneRef.playSound('spike-spawn')
     this.sceneRef.data.set('play-arrow-launch', true)
 
-    const RND = Phaser.Math.RND
-    const type = spawn.variant
-    if (type === 'row') {
-      this.spawnWave(RND.between(0, 7), 1, 0, 8, 'row')
-    } else if (type === 'wave') {
-      this.spawnWave(RND.between(0, 4), 3, 0, 8, RND.pick(['row', 'column']))
-    } else if (type === 'column') {
-      this.spawnWave(RND.between(0, 7), 1, 0, 8, 'column')
-    } else if (type === 'arc') {
-      for (let i = 0; i < 10; i++) {
-        const j = 360 / 10
-        this.spawnArc(i * j, j + i * j, { baseDelay: i * 1 })
+    const type = attack.variant
+    const repeat = attack.repeat ?? 1
+    if (type === 'arc') {
+      for (let k = 0; k < repeat; k++) {
+        const div = this.sceneRef.data.get('waveRate')
+        const j = 360 / div
+
+        for (let i = 0; i < div; i++) {
+          this.spawnArc(i * j, j + i * j, {
+            baseDelay:
+              Math.floor(k * (div / repeat)) +
+              (attack.direction === 0 ? i : div - i),
+          })
+        }
       }
-    } else if (type === 'box') {
-      const width = spawn.size ?? 3
-      const height = spawn.size ?? 3
-      const x = RND.between(0, 8 - width)
-      const y = RND.between(0, 8 - height)
-      this.spawnWave(x, width, y, height, 'column')
+    } else {
+      this.spawnWave(attack)
     }
   }
 
-  private spawnWave(
-    index1: number,
-    size1: number,
-    index2: number,
-    size2: number,
-    type: 'row' | 'column',
-    params?: SpawnParams,
-  ) {
+  private spawnWave(attack: IAttack) {
     let k = 0
+    const size1 = attack.size ?? 1
+    const size2 = attack.size2 ?? 1
+    const repeat = attack.repeat ?? 1
+    const possibleIndex1 = []
+    const possibleIndex2 = []
+    for (let idx = 0; idx <= 8 - size1; idx++) possibleIndex1.push(idx)
+    for (let idx = 0; idx <= 8 - size2; idx++) possibleIndex2.push(idx)
+    const shuffledIndex1 = Phaser.Utils.Array.Shuffle(possibleIndex1)
+    const shuffledIndex2 = Phaser.Utils.Array.Shuffle(possibleIndex2)
 
-    for (let i = index1; i < index1 + size1; i++) {
-      const indexes: number[] = []
-      for (let j = index2; j < index2 + size2; j++) {
-        if (type === 'row') {
-          indexes.push(i * 8 + j)
-        } else {
-          indexes.push(j * 8 + i)
+    for (let m = 0; m < repeat; m++) {
+      const RND = Phaser.Math.RND
+      const direction = attack.direction ?? RND.between(0, 1)
+      const index1 = attack.index ?? shuffledIndex1[m % shuffledIndex1.length]
+      const index2 = attack.index2 ?? shuffledIndex2[m % shuffledIndex2.length]
+
+      for (let i = index1; i < index1 + size1; i += 1) {
+        const indexes: number[] = []
+        for (let j = index2; j < index2 + size2; j += 1) {
+          if (typeof attack.gap === 'number' && (i + j) % 2 !== attack.gap)
+            continue
+          if (direction === 0) {
+            indexes.push(i * 8 + j)
+          } else {
+            indexes.push(j * 8 + i)
+          }
         }
+        this.spawnMany(indexes, {
+          ...attack,
+          baseDelay: attack.baseDelay ?? k++,
+        })
       }
-      this.spawnMany(indexes, { ...params, delay: 0, baseDelay: k++ })
     }
   }
 

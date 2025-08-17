@@ -1,6 +1,10 @@
 import { Physics } from 'phaser'
 import { Game } from '../scenes/Game'
-import { COIN_LIFETIME, COIN_LIFETIME_DECREASE } from '../constants'
+import {
+  COIN_LIFETIME,
+  COIN_LIFETIME_DECREASE,
+  TICK_DURATION,
+} from '../constants'
 
 export class Coin extends Physics.Arcade.Sprite {
   protected sceneRef: Game
@@ -60,8 +64,12 @@ export class Coin extends Physics.Arcade.Sprite {
     this.fadeTween = this.sceneRef.tweens.add({
       targets: this,
       alpha: -0.15,
-      delay: (COIN_LIFETIME / 2) * 100 - COIN_LIFETIME_DECREASE * 100 * m,
-      duration: (COIN_LIFETIME / 2) * 100 - COIN_LIFETIME_DECREASE * 100 * m,
+      delay:
+        (COIN_LIFETIME / 2) * TICK_DURATION -
+        COIN_LIFETIME_DECREASE * TICK_DURATION * m,
+      duration:
+        (COIN_LIFETIME / 2) * TICK_DURATION -
+        COIN_LIFETIME_DECREASE * TICK_DURATION * m,
       onComplete: () => {
         this.sceneRef.player.resetMulti()
         this.particles.setConfig({

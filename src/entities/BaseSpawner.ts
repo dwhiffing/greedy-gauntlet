@@ -1,4 +1,4 @@
-import { ISpawn } from '../constants'
+import { IAttack, TICK_DURATION } from '../constants'
 import { Game } from '../scenes/Game'
 
 export type SpawnParams = { delay?: number; baseDelay?: number }
@@ -12,10 +12,22 @@ export class BaseSpawner {
   }
 
   spawn = (_index: number, _delay: number): void => {}
-  spawnNextWave = (_variant: ISpawn) => {}
+  spawnNextWave = (_variant: IAttack) => {}
 
   spawnMany = (indexes: number[], params?: SpawnParams) => {
     indexes.forEach((i, idx) => {
+      // don't spawn duplicates
+      if (
+        this.scheduledSpawns.some(
+          (spawn) =>
+            spawn.index === i &&
+            spawn.tick ===
+              this.globalTick +
+                idx * (params?.delay ?? 0) +
+                (params?.baseDelay ?? 0),
+        )
+      )
+        return
       this.scheduleSpawn(
         this.globalTick + idx * (params?.delay ?? 0) + (params?.baseDelay ?? 0),
         i,
@@ -30,7 +42,10 @@ export class BaseSpawner {
   tick = () => {
     this.scheduledSpawns = this.scheduledSpawns.filter((spawn) => {
       if (spawn.index > -1 && spawn.tick === this.globalTick) {
-        this.spawn(spawn.index, this.sceneRef.data.get('attackDelay') * 100)
+        this.spawn(
+          spawn.index,
+          this.sceneRef.data.get('attackDelay') * TICK_DURATION,
+        )
         return false
       }
       return true

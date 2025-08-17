@@ -1,7 +1,7 @@
 import { Physics } from 'phaser'
 import { Game } from '../scenes/Game'
 import { TimerBorder } from './TimerBorder'
-import { SPIKE_EXTRA_FRAMES } from '../constants'
+import { SPIKE_EXTRA_FRAMES, TICK_DURATION } from '../constants'
 
 export class Spike extends Physics.Arcade.Sprite {
   protected sceneRef: Game
@@ -20,7 +20,7 @@ export class Spike extends Physics.Arcade.Sprite {
     this.timerBorder = new TimerBorder(scene)
 
     this.sceneRef.time.addEvent({
-      delay: 100,
+      delay: TICK_DURATION,
       repeat: -1,
       callback: () => {
         if (!this.active) return
@@ -48,10 +48,10 @@ export class Spike extends Physics.Arcade.Sprite {
     this.setPosition(x * 8, y * 8).setVelocity(0, 0)
     this.setVisible(true).setActive(true).setFrame(4).setAlpha(0)
 
-    this.lifetime = delay / 100
+    this.lifetime = delay / TICK_DURATION
     this.age = 0
     this.sceneRef.tweens.add({ targets: this, alpha: 0.7, duration: 250 })
-    this.timerBorder.reset(x, y, this.lifetime * 100)
+    this.timerBorder.reset(x, y, this.lifetime * TICK_DURATION)
   }
 
   public takeDamage(): void {

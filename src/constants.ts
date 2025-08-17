@@ -1,4 +1,33 @@
-export type ISpawn = { type: string; variant: string; size?: number }
+import { EASY_ARROW_SPREAD, EASY_ARROW_VOLLEY, EASY_SPIKE_BOX } from './attacks'
+
+export type IAttack = {
+  type: string
+  variant?: string
+  // the number of arrows in the attack, negative can be used to state the number of gaps
+  size?: number
+  // the width/height for spike boxes
+  size2?: number
+  // a gap between each arrow
+  gap?: number
+  // the amount of times to repeat for spike rows/cols
+  repeat?: number
+  // should the gap be randomly distributed instead of contiguous?
+  random?: boolean
+  // delay between each arrow/spike
+  delay?: number
+  // delay before attack starts
+  baseDelay?: number
+  // pass a specific index instead of starting at a random index
+  index?: number
+  // the index of the opposing axis for spikes
+  index2?: number
+  // pass a specific direction instead of a random one
+  direction?: number
+}
+
+export type ISpawn = {
+  attacks: IAttack[]
+}
 export type ILevel = {
   pool: ISpawn[]
   waveRate: number
@@ -10,7 +39,8 @@ export type ILevel = {
 export const COMBO_AMOUNTS = [4, 10, 18, 28, 40, 54]
 export const MULTIPLIERS = [1, 2, 3, 5, 10, 20, 50]
 
-export const COIN_LIFETIME = 40
+export const TICK_DURATION = 100
+export const COIN_LIFETIME = 4000 / TICK_DURATION
 export const COIN_LIFETIME_DECREASE = 2.5
 export const SPIKE_EXTRA_FRAMES = 4
 
@@ -19,42 +49,34 @@ export const PLAYER_REGEN_TIME = 5000
 export const PLAYER_BASE_SPEED = 170
 export const PLAYER_SLOW_SPEED = 220
 
-export const LEVELS = [
+export const LEVELS: ILevel[] = [
   {
     milestone: 0,
-    pool: [{ type: 'arrow', variant: 'volley', size: 4 }],
-    waveRate: 30,
-    attackDelay: 15,
+    // pool: [EASY_SPIKE_ARC],
+    pool: [EASY_ARROW_VOLLEY],
+    waveRate: 3000 / TICK_DURATION,
+    attackDelay: 1500 / TICK_DURATION,
     arrowSpeed: 5,
   },
   {
     milestone: 25,
-    pool: [
-      { type: 'arrow', variant: 'volley', size: 4 },
-      { type: 'spike', variant: 'box', size: 4 },
-    ],
-    waveRate: 20,
-    attackDelay: 15,
+    pool: [EASY_ARROW_SPREAD, EASY_ARROW_VOLLEY, EASY_SPIKE_BOX],
+    waveRate: 2000 / TICK_DURATION,
+    attackDelay: 1500 / TICK_DURATION,
     arrowSpeed: 4,
   },
   {
     milestone: 100,
-    pool: [
-      { type: 'arrow', variant: 'volley', size: 4 },
-      { type: 'spike', variant: 'box', size: 4 },
-    ],
-    waveRate: 15,
-    attackDelay: 10,
+    pool: [EASY_ARROW_VOLLEY, EASY_SPIKE_BOX],
+    waveRate: 1500 / TICK_DURATION,
+    attackDelay: 1000 / TICK_DURATION,
     arrowSpeed: 3,
   },
   {
     milestone: 200,
-    pool: [
-      { type: 'arrow', variant: 'volley', size: 4 },
-      { type: 'spike', variant: 'box', size: 4 },
-    ],
-    waveRate: 10,
-    attackDelay: 5,
+    pool: [EASY_ARROW_VOLLEY, EASY_SPIKE_BOX],
+    waveRate: 1000 / TICK_DURATION,
+    attackDelay: 500 / TICK_DURATION,
     arrowSpeed: 2,
   },
 ]

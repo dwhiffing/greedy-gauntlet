@@ -9,7 +9,7 @@ import { Coin } from '../entities/Coin'
 import { CoinSpawner } from '../entities/CoinSpawner'
 import { FadingBitmapText } from '../entities/FadingBitmapText'
 import { UI } from '../entities/UI'
-import { ISpawn, LEVELS } from '../constants'
+import { ISpawn, LEVELS, TICK_DURATION } from '../constants'
 
 export class Game extends Scene {
   public floor!: Floor
@@ -49,7 +49,11 @@ export class Game extends Scene {
     this.data.set('gameover', 1)
     this.spawnPool = []
 
-    this.time.addEvent({ repeat: -1, delay: 100, callback: this.tick })
+    this.time.addEvent({
+      repeat: -1,
+      delay: TICK_DURATION,
+      callback: this.tick,
+    })
     this.time.addEvent({ repeat: -1, delay: 5, callback: this.arrowTick })
 
     this.input.keyboard!.on('keydown-M', () => {
@@ -67,7 +71,7 @@ export class Game extends Scene {
     // this.startGame({ key: 'Arrow' })
   }
 
-  startGame = (e: any) => {
+  startGame = (e: { key: string }) => {
     if (!e.key.includes('Arrow') || this.data.get('gameover') === 0) return
 
     this.data.set('gameover', 0)
@@ -125,11 +129,13 @@ export class Game extends Scene {
       }
 
       const spawn = this.spawnPool.shift()!
-      if (spawn.type === 'arrow') {
-        this.arrowSpawner.spawnNextWave(spawn)
-      } else if (spawn.type === 'spike') {
-        this.spikeSpawner.spawnNextWave(spawn)
-      }
+      spawn.attacks.forEach((spawn) => {
+        if (spawn.type === 'arrow') {
+          this.arrowSpawner.spawnNextWave(spawn)
+        } else if (spawn.type === 'spike') {
+          this.spikeSpawner.spawnNextWave(spawn)
+        }
+      })
     }
 
     this.data.inc('waveTimer', -1)
