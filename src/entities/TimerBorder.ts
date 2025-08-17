@@ -47,7 +47,7 @@ export class TimerBorder extends Phaser.GameObjects.Graphics {
     this.setPosition(this.x, this.y)
     this.x = x * 8
     this.y = y * 8
-    this.alpha = 0.35
+    this.alpha = 0.5
     this.durationMs = durationMs
     this.redraw()
   }
