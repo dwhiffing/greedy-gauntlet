@@ -78,7 +78,6 @@ export class Game extends Scene {
 
     this.data.set('paused', 1)
     this.data.set('gameover', 1)
-    this.updateDifficulty(0)
 
     this.time.addEvent({ repeat: -1, delay: 100, callback: this.tick })
     this.time.addEvent({ repeat: -1, delay: 5, callback: this.arrowTick })
@@ -100,6 +99,7 @@ export class Game extends Scene {
         this.data.set('paused', 0)
         this.data.set('waveTimer', 0)
         this.data.set('arrowTick', 0)
+        this.updateDifficulty(0)
       },
     })
   }
