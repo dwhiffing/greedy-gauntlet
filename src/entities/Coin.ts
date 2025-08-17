@@ -19,10 +19,7 @@ export class Coin extends Physics.Arcade.Sprite {
         frame: 3,
         lifespan: 300,
         speed: 40,
-        scale: 0.7,
         alpha: { start: 0.4, end: 0 },
-        tint: 0xffaa00,
-        angle: { start: 0, end: 360, steps: 6 },
       })
       .stop()
       .setDepth(2)
@@ -45,6 +42,15 @@ export class Coin extends Physics.Arcade.Sprite {
 
   public pickup() {
     this.setActive(false).setVisible(false)
+    this.particles.setConfig({
+      frame: 3,
+      lifespan: 300,
+      speed: 40,
+      alpha: { start: 0.4, end: 0 },
+      angle: { start: 0, end: 360, steps: 6 },
+      tint: 0xffaa00,
+      scale: 1,
+    })
     this.particles.setPosition(this.x + 4, this.y + 4).explode(6)
     this.fadeTween?.remove()
   }
@@ -53,11 +59,21 @@ export class Coin extends Physics.Arcade.Sprite {
     const m = this.sceneRef.player.multiIndex
     this.fadeTween = this.sceneRef.tweens.add({
       targets: this,
-      alpha: 0,
-      delay: 1500 - 250 * m,
-      duration: 2000 - 250 * m,
+      alpha: -0.15,
+      delay: (COIN_LIFETIME / 2) * 100 - COIN_LIFETIME_DECREASE * 100 * m,
+      duration: (COIN_LIFETIME / 2) * 100 - COIN_LIFETIME_DECREASE * 100 * m,
       onComplete: () => {
         this.sceneRef.player.resetMulti()
+        this.particles.setConfig({
+          frame: 3,
+          lifespan: 300,
+          speed: 40,
+          alpha: { start: 0.4, end: 0 },
+          scale: 0.65,
+          tint: 0xffffff,
+          angle: { start: 0, end: 360, steps: 3 },
+        })
+        this.particles.setPosition(this.x + 4, this.y + 4).explode(3)
         this.setVisible(false)
         this.setActive(false)
       },
