@@ -47,9 +47,15 @@ export class Game extends Scene {
     this.coins = this.physics.add.group({ classType: Coin })
     this.coinSpawner = new CoinSpawner(this)
 
+    this.spawnPool = []
     this.data.set('paused', 1)
     this.data.set('gameover', 1)
-    this.spawnPool = []
+    const highScore = Number(localStorage.getItem('highScore') ?? '0')
+    this.data.set('highScore', highScore)
+    if (highScore > 0) {
+      this.ui.scoreText.setText(`HIGH SCORE\n${highScore}`)
+      this.ui.title.y = 14
+    }
 
     this.time.addEvent({
       repeat: -1,
@@ -106,8 +112,15 @@ export class Game extends Scene {
     this.music.pause()
     this.spawnPool = []
 
+    const score = this.data.get('score') ?? 0
+    const prevHighScore = Number(localStorage.getItem('highScore') ?? '0')
+    if (score > prevHighScore) {
+      localStorage.setItem('highScore', String(score))
+      this.data.set('highScore', score)
+    }
+
     this.ui.title.y = 14
-    this.ui.scoreText.setText(`SCORE\n${this.data.get('score') ?? 0}`)
+    this.ui.scoreText.setText(`HIGH SCORE\n${this.data.get('highScore') ?? 0}`)
     this.tweens.add({
       targets: [this.ui.scoreText, this.ui.title, this.ui.titleText],
       alpha: 1,
