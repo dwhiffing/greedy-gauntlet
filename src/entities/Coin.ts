@@ -24,7 +24,7 @@ export class Coin extends Physics.Arcade.Sprite {
         angle: { start: 0, end: 360, steps: 6 },
       })
       .stop()
-      .setDepth(1)
+      .setDepth(2)
 
     scene.physics.add.existing(this)
 
