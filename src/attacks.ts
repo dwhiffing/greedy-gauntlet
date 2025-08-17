@@ -5,23 +5,23 @@ export const EASY_ARROW_VOLLEY: ISpawn = {
 }
 
 export const MEDIUM_ARROW_VOLLEY: ISpawn = {
-  attacks: [{ type: 'arrow', delay: 0, size: 5, random: true }],
+  attacks: [{ type: 'arrow', delay: 0, size: 4 }],
 }
 
 export const HARD_ARROW_VOLLEY: ISpawn = {
-  attacks: [{ type: 'arrow', delay: 0, size: 7, random: true }],
+  attacks: [{ type: 'arrow', delay: 0, size: 5 }],
 }
 
 export const EASY_ARROW_SPREAD: ISpawn = {
-  attacks: [{ type: 'arrow', delay: 2, size: 3 }],
+  attacks: [{ type: 'arrow', delay: 1, size: 3 }],
 }
 
 export const MEDIUM_ARROW_SPREAD: ISpawn = {
-  attacks: [{ type: 'arrow', delay: 4, size: 5, random: true }],
+  attacks: [{ type: 'arrow', delay: 2, size: 4 }],
 }
 
 export const HARD_ARROW_SPREAD: ISpawn = {
-  attacks: [{ type: 'arrow', delay: 6, size: 6, random: true }],
+  attacks: [{ type: 'arrow', delay: 3, size: 5 }],
 }
 
 const CROSS_ARROW_BASE: IAttack = {
@@ -80,11 +80,19 @@ export const EASY_SPIKE_BOX: ISpawn = {
   attacks: [{ type: 'spike', size: 3, size2: 3 }],
 }
 
+export const MEDIUM_SPIKE_BOX: ISpawn = {
+  attacks: [{ type: 'spike', size: 4, size2: 4 }],
+}
+
+export const HARD_SPIKE_BOX: ISpawn = {
+  attacks: [{ type: 'spike', size: 5, size2: 5 }],
+}
+
 const SPIKE_ROW_BASE: IAttack = {
   type: 'spike',
   size: 8,
   size2: 1,
-  repeat: 2,
+  repeat: 3,
   baseDelay: 0,
 }
 export const EASY_SPIKE_ROWS: ISpawn[] = [
@@ -94,16 +102,16 @@ export const EASY_SPIKE_ROWS: ISpawn[] = [
 export const MEDIUM_SPIKE_ROWS: ISpawn[] = [
   {
     attacks: [
-      { ...SPIKE_ROW_BASE, repeat: 2, direction: 0 },
-      { ...SPIKE_ROW_BASE, repeat: 2, direction: 1 },
+      { ...SPIKE_ROW_BASE, repeat: 4, direction: 0 },
+      { ...SPIKE_ROW_BASE, repeat: 4, direction: 1 },
     ],
   },
 ]
 export const HARD_SPIKE_ROWS: ISpawn[] = [
   {
     attacks: [
-      { ...SPIKE_ROW_BASE, repeat: 4, direction: 0 },
-      { ...SPIKE_ROW_BASE, repeat: 4, direction: 1 },
+      { ...SPIKE_ROW_BASE, repeat: 5, direction: 0 },
+      { ...SPIKE_ROW_BASE, repeat: 5, direction: 1 },
     ],
   },
 ]
