@@ -83,6 +83,7 @@ export class Game extends Scene {
     this.data.set('gameover', 0)
     this.data.set('score', 0)
     this.data.set('play-arrow-launch', true)
+    this.spawnPool = []
     this.music.play()
 
     this.ui.titleTextTween?.pause()
@@ -103,6 +104,7 @@ export class Game extends Scene {
   gameOver = () => {
     this.data.set('paused', 1)
     this.music.pause()
+    this.spawnPool = []
 
     this.ui.title.y = 14
     this.ui.scoreText.setText(`SCORE\n${this.data.get('score') ?? 0}`)
