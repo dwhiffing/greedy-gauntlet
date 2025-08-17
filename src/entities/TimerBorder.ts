@@ -5,6 +5,7 @@ export class TimerBorder extends Phaser.GameObjects.Graphics {
   public durationMs: number = 1000
   public size: number = 7
   public alpha: number = 1
+  private tween: Phaser.Tweens.Tween | null = null
 
   constructor(scene: Phaser.Scene) {
     super(scene)
@@ -17,7 +18,7 @@ export class TimerBorder extends Phaser.GameObjects.Graphics {
   preUpdate(_time: number, delta: number) {
     if (this.progress > 1) {
       this.progress = 1
-      this.scene.tweens.add({
+      this.tween = this.scene.tweens.add({
         targets: this,
         alpha: 0,
         delay: 50,
@@ -45,10 +46,11 @@ export class TimerBorder extends Phaser.GameObjects.Graphics {
 
   reset(x: number, y: number, durationMs: number) {
     this.progress = 0
-    this.setPosition(this.x, this.y)
     this.x = x * 8
     this.y = y * 8
+    this.setPosition(this.x, this.y)
     this.alpha = 0.5
+    this.tween?.pause()
     this.durationMs = durationMs
     this.setVisible(true).setActive(true)
     this.redraw()

@@ -1,4 +1,4 @@
-import { Physics } from 'phaser'
+import { Physics, Tweens } from 'phaser'
 import { Game } from '../scenes/Game'
 import { TimerBorder } from './TimerBorder'
 import { SPIKE_EXTRA_FRAMES, TICK_DURATION } from '../constants'
@@ -9,6 +9,7 @@ export class Spike extends Physics.Arcade.Sprite {
   private age = 0
   public timerBorder: TimerBorder
   public _isTangible = false
+  private tween: Tweens.Tween | null = null
 
   constructor(scene: Game) {
     super(scene, 3 * 8, 3 * 8, 'sheet', 5)
@@ -47,6 +48,7 @@ export class Spike extends Physics.Arcade.Sprite {
   public spawn(x: number, y: number, delay: number): void {
     this.setPosition(x * 8, y * 8).setVelocity(0, 0)
     this.setVisible(true).setActive(true).setFrame(4).setAlpha(0)
+    this.tween?.pause()
 
     this.lifetime = delay / TICK_DURATION
     this.age = 0
@@ -60,16 +62,17 @@ export class Spike extends Physics.Arcade.Sprite {
 
   public getIsTangible = () => this._isTangible
 
-  private fadeOut = () =>
-    this.sceneRef.tweens.add({
+  private fadeOut = () => {
+    this.setActive(false)
+    this.tween = this.sceneRef.tweens.add({
       targets: this,
       alpha: 0,
       delay: 0,
       duration: 300,
       onComplete: () => {
         this.setVisible(false)
-        this.setActive(false)
         this.timerBorder.setVisible(false).setActive(false)
       },
     })
+  }
 }
