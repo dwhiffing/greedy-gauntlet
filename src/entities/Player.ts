@@ -78,7 +78,7 @@ export class Player extends Physics.Arcade.Sprite {
 
   public async takeDamage() {
     this.isTangible = false
-    this.sceneRef.camera.shake(200, 0.02, true)
+    this.sceneRef.cameras.main.shake(200, 0.02, true)
     if (this.hat.alpha === 0) {
       this.onDeath()
     } else {
@@ -179,7 +179,7 @@ export class Player extends Physics.Arcade.Sprite {
         angle: { start: 0, end: 360, steps: 6 },
       })
       .explode(6, this.x, this.y)
-    s.gameover()
+    s.gameOver()
   }
 
   private setOffsets(flip = false) {

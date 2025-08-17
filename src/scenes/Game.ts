@@ -1,4 +1,4 @@
-import { Cameras, GameObjects, Physics, Scene } from 'phaser'
+import { Physics, Scene } from 'phaser'
 import { Floor } from '../entities/Floor'
 import { Player } from '../entities/Player'
 import { Arrow } from '../entities/Arrow'
@@ -8,10 +8,10 @@ import { Spike } from '../entities/Spike'
 import { Coin } from '../entities/Coin'
 import { CoinSpawner } from '../entities/CoinSpawner'
 import { FadingBitmapText } from '../entities/FadingBitmapText'
+import { UI } from '../entities/UI'
 import { ISpawn, LEVELS } from '../constants'
 
 export class Game extends Scene {
-  public camera!: Cameras.Scene2D.Camera
   public floor!: Floor
   public player!: Player
   public arrows!: Physics.Arcade.Group
@@ -21,79 +21,50 @@ export class Game extends Scene {
   public arrowSpawner!: ArrowSpawner
   public spikeSpawner!: SpikeSpawner
   public coinSpawner!: CoinSpawner
-  public titleText!: GameObjects.BitmapText
-  public scoreText!: GameObjects.BitmapText
-  public title!: GameObjects.Image
   private spawnPool: ISpawn[]
-  public titleTextTween?: Phaser.Tweens.Tween
+  public ui!: UI
 
   constructor() {
     super('Game')
   }
 
   create(): void {
-    this.camera = this.cameras.main
-    this.camera.fadeFrom(500, 0, 0, 0)
-    this.input.keyboard!.on('keydown-M', () => {
-      this.game.sound.setMute(!this.game.sound.mute)
-    })
-    this.input.keyboard!.on('keydown', this.startGame)
+    this.cameras.main.fadeFrom(500, 0, 0, 0)
 
     this.floor = new Floor(this)
     this.player = new Player(this)
     this.text = new FadingBitmapText(this)
+    this.ui = new UI(this)
 
-    this.title = this.add.image(32, 28, 'title').setDepth(10)
-
-    this.spawnPool = []
-    this.titleText = this.add
-      .bitmapText(32, 64, 'pixel-dan', 'PRESS ARROW KEY')
-      .setTintFill(0xffffff)
-      .setFontSize(5)
-      .setOrigin(0.5, 1)
-      .setDepth(10)
-
-    this.titleTextTween = this.tweens.add({
-      targets: this.titleText,
-      alpha: { from: 1, to: 0.4 },
-      duration: 1200,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    })
-
-    this.scoreText = this.add
-      .bitmapText(32, 42, 'pixel-dan', '')
-      .setCenterAlign()
-      .setTintFill(0xffffff)
-      .setFontSize(5)
-      .setOrigin(0.5, 0.5)
-      .setDepth(10)
-
-    this.arrows = this.physics.add.group({
-      classType: Arrow,
-      runChildUpdate: true,
-    })
-
-    this.spikes = this.physics.add.group({
-      classType: Spike,
-      runChildUpdate: true,
-    })
-
-    this.coins = this.physics.add.group({
-      classType: Coin,
-      runChildUpdate: true,
-    })
-
+    this.arrows = this.physics.add.group({ classType: Arrow })
     this.arrowSpawner = new ArrowSpawner(this)
+
+    this.spikes = this.physics.add.group({ classType: Spike })
     this.spikeSpawner = new SpikeSpawner(this)
+
+    this.coins = this.physics.add.group({ classType: Coin })
     this.coinSpawner = new CoinSpawner(this)
 
     this.data.set('paused', 1)
     this.data.set('gameover', 1)
+    this.spawnPool = []
 
     this.time.addEvent({ repeat: -1, delay: 100, callback: this.tick })
     this.time.addEvent({ repeat: -1, delay: 5, callback: this.arrowTick })
+
+    this.input.keyboard!.on('keydown-M', () => {
+      const newMute = !this.game.sound.mute
+      this.game.sound.setMute(newMute)
+      localStorage.setItem('mute', String(newMute))
+    })
+
+    const muteStatus = localStorage.getItem('mute')
+    if (muteStatus !== null) {
+      this.game.sound.setMute(muteStatus === 'true')
+    }
+
+    this.input.keyboard!.on('keydown', this.startGame)
+    // this.startGame({ key: 'Arrow' })
   }
 
   startGame = (e: any) => {
@@ -103,10 +74,10 @@ export class Game extends Scene {
     this.data.set('score', 0)
     this.playSound('game-start')
 
-    this.titleTextTween?.pause()
+    this.ui.titleTextTween?.pause()
     this.player.onRevive()
     this.tweens.add({
-      targets: [this.titleText, this.scoreText, this.title],
+      targets: [this.ui.titleText, this.ui.scoreText, this.ui.title],
       alpha: 0,
       duration: 500,
       onComplete: () => {
@@ -118,27 +89,20 @@ export class Game extends Scene {
     })
   }
 
-  gameover = () => {
-    this.title.y = 14
+  gameOver = () => {
     this.data.set('paused', 1)
-    this.scoreText.setText(`SCORE\n${this.data.get('score') ?? 0}`)
+
+    this.ui.title.y = 14
+    this.ui.scoreText.setText(`SCORE\n${this.data.get('score') ?? 0}`)
     this.tweens.add({
-      targets: [this.scoreText, this.title, this.titleText],
+      targets: [this.ui.scoreText, this.ui.title, this.ui.titleText],
       alpha: 1,
       duration: 1500,
       onComplete: () => {
-        this.titleTextTween?.restart()
+        this.ui.titleTextTween?.restart()
         this.data.set('gameover', 1)
       },
     })
-  }
-
-  updateDifficulty(n: number) {
-    this.data.set('difficulty', n)
-    const d = this.data.get('difficulty')
-    this.data.set('waveRate', LEVELS[d].waveRate)
-    this.data.set('arrowSpeed', LEVELS[d].arrowSpeed)
-    this.data.set('attackDelay', LEVELS[d].attackDelay)
   }
 
   tick = () => {
@@ -207,6 +171,14 @@ export class Game extends Scene {
         player.grabCoin()
       }
     })
+  }
+
+  updateDifficulty(n: number) {
+    this.data.set('difficulty', n)
+    const d = this.data.get('difficulty')
+    this.data.set('waveRate', LEVELS[d].waveRate)
+    this.data.set('arrowSpeed', LEVELS[d].arrowSpeed)
+    this.data.set('attackDelay', LEVELS[d].attackDelay)
   }
 
   playSound = (key: string, extra?: Phaser.Types.Sound.SoundConfig) => {
